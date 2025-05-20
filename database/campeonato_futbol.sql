@@ -47,6 +47,7 @@ DROP TABLE Clube;
     presidente VARCHAR(50),
     tecnico_id INT
 );
+SET @ID_Clube := LAST_INSERT_ID();
 
 INSERT INTO Clube (
     nome, escudo, apelido, fundacao, pais, estado, cidade, estadio, presidente, tecnico_id
@@ -84,4 +85,50 @@ VALUES
 
 SELECT * FROM Clube;
 
+--Tabela Estadio--------------------------------------------
 
+DROP TABLE Estadio;
+
+CREATE Table Estadio(
+    ID_Estadio INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    nome VARCHAR(100),
+    localizacao VARCHAR(100),
+    data_construçao DATE,
+    capacidade INT,
+    Clube_ID INT
+);
+
+INSERT INTO Estadio (nome, localizacao, data_construçao, capacidade, Clube_ID ) VALUES ('Santiago Bernabeu', 'Real Madrid', '1947-12-14', 83184, @ID_Clube);
+
+SELECT * FROM Estadio;
+
+--tabela Campeonato------------------------------
+
+DROP TABLE campeonato;
+CREATE Table Campeonato (
+    ID_Campeonato INT PRIMARY KEY AUTO_INCREMENT NOT NULL ,
+    nome VARCHAR(100),
+    ano INT,
+    numero_de_times INT,
+    categoria VARCHAR(70),
+    local_realizado VARCHAR(100),
+    data_inicio DATE,
+    data_fim DATE,
+    regulamento VARCHAR(100),
+    organizador VARCHAR(100)
+);
+
+INSERT INTO Campeonato (nome, ano, numero_de_times, categoria, local_realizado, data_inicio, data_fim, regulamento, organizador)
+ VALUES 
+('Campeonato Brasileiro Série A',
+    2025,
+    20,
+    'Adulto Masculino',
+    'Brasil',
+    '2025-04-13',
+    '2025-12-08',
+    'Regulamento oficial disponível no site da CBF.',
+    'Confederação Brasileira de Futebol (CBF)'
+);
+
+SELECT * FROM Campeonato;
