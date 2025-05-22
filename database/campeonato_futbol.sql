@@ -1,5 +1,6 @@
 CREATE DATABASE IF NOT EXISTS Campeonato_Futebol;
 
+drop DATABASE Campeonato_Futebol;
 USE Campeonato_Futebol;
 
 --tabela clube--------------------------------------
@@ -24,15 +25,15 @@ INSERT INTO Clube (
 )
 VALUES
 (
-    'Real Madrid Club de Fútbol',
-    'https://upload.wikimedia.org/wikipedia/pt/thumb/9/98/Real_Madrid.png/120px-Real_Madrid.png',
-    'Real Madrid',
-    '1902-03-06',
-    'Espanha',
-    'Madrid',
-    'Madrid',
-    'Santiago Bernabéu',
-    'Florentino Pérez',
+    'Atletico Mineiro',
+    '',
+    'Galo',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
    @id_tecnico
 );
 INSERT INTO Clube (
@@ -87,6 +88,35 @@ CREATE TABLE IF NOT EXISTS Tecnico(
 SET @id_tecnico := LAST_INSERT_ID();
 INSERT INTO Tecnico (Nome, Data_Nascimento, Nacionalidade, experiencia) VALUES ( 'Carlo Ancelotti', '1959-06-10', 'Itália', 29);
 INSERT INTO Tecnico (Nome, Data_Nascimento, Nacionalidade, experiencia) VALUES ( 'António Oliveira', '1982-10-10', 'Portugal', 10);
+
+--Tabela Arbitro--------------------------------------------
+DROP TABLE IF EXISTS Arbitro;
+
+CREATE TABLE IF NOT EXISTS Arbitro(
+    ID_Arbitro INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    Nome VARCHAR(100),
+    Data_Nascimento DATE,
+    Nacionalidade VARCHAR (50),
+    experiencia INT
+);
+
+INSERT INTO Arbitro (Nome, Data_Nascimento, Nacionalidade, experiencia) VALUES ('Anderson Daronco', '1981-11-10', 'Brasil', 15);
+
+INSERT INTO Arbitro (Nome, Data_Nascimento, Nacionalidade, experiencia) VALUES ('Wilton Pereira Sampaio', '1981-11-10', 'Brasil', 15);
+
+create table if not exists Arbitro_da_partida (
+    ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    fk_arbitro INT,
+    fk_partida INT,
+    -- chaves estrangeiras --
+    FOREIGN KEY (fk_arbitro) REFERENCES Arbitro(ID_Arbitro),
+    FOREIGN KEY (fk_partida) REFERENCES Partida(ID)
+);
+
+INSERT INTO Arbitro_da_partida (fk_arbitro, fk_partida) VALUES (1, 1);
+INSERT INTO Arbitro_da_partida (fk_arbitro, fk_partida) VALUES (2, 1);
+
+
 
 --Tabela Estadio--------------------------------------------
 
@@ -155,6 +185,10 @@ CREATE TABLE IF NOT EXISTS Partida (
     FOREIGN KEY (fk_timeVisitante) REFERENCES Clube(ID)
 );
 
+INSERT INTO Partida (data, hora, fk_campeonato, fk_estadio, fk_timeMandante, fk_timeVisitante) VALUES ('2025-04-13', '16:00:00', 1, 1, 1, 2);
+
+INSERT INTO Partida (data, hora, fk_campeonato, fk_estadio, fk_timeMandante, fk_timeVisitante) VALUES ('2025-04-14', '18:00:00', 1, 1, '2', '1');
+SELECT * from Partida;
 -- tabela Gols -------------------------------------
 DROP TABLE IF EXISTS Gols;
 CREATE TABLE IF NOT EXISTS Gols (
@@ -202,15 +236,19 @@ CREATE TABLE IF NOT EXISTS Substituicao (
 );
 
 -- TABELAS DE RELACIONAMENTO --------------------
-CREATE TABLE IF NOT EXISTS jogador_estadio (
-    ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    fk_jogador INT,
-    fk_estadio INT,
-    -- chaves estrangeiras --
-    FOREIGN KEY (fk_jogador) REFERENCES Jogador(ID),
-    FOREIGN KEY (fk_estadio) REFERENCES Estadio(ID_Estadio)
-);
 
+--drop table if exists jogador_estadio;
+--CREATE TABLE IF NOT EXISTS jogador_estadio (
+--    ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+--    fk_jogador INT,
+--    fk_estadio INT,
+--    -- chaves estrangeiras --
+--    FOREIGN KEY (fk_jogador) REFERENCES Jogador(ID),
+--    FOREIGN KEY (fk_estadio) REFERENCES Estadio(ID_Estadio)
+--);--
+--
+
+DROP TABLE IF EXISTS estadio_campeonato;
 CREATE TABLE IF NOT EXISTS estadio_campeonato (
     ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     fk_estadio INT,
@@ -239,6 +277,7 @@ CREATE TABLE IF NOT EXISTS jogador_campeonato (
     FOREIGN KEY (fk_campeonato) REFERENCES Campeonato(ID_Campeonato)
 );
 
+DROP TABLE IF EXISTS jogador_partida;
 CREATE TABLE IF NOT EXISTS jogador_partida (
     ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     fk_jogador INT,
@@ -250,3 +289,6 @@ CREATE TABLE IF NOT EXISTS jogador_partida (
     FOREIGN KEY (fk_jogador) REFERENCES Jogador(ID),
     FOREIGN KEY (fk_partida) REFERENCES Partida(ID)
 );  
+
+
+
