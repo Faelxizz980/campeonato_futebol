@@ -1,40 +1,10 @@
-CREATE database Campeonato_Futebol;
+CREATE DATABASE IF NOT EXISTS Campeonato_Futebol;
 
-use Campeonato_Futebol;
-
---Tabela jogador-------------------------------------------
-DROP table jogador ;
-CREATE TABLE Jogador (
-    ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL, 
-    Nome VARCHAR (100),
-    Data_Nascimento Date,
-    Nacionalidade VARCHAR (50),
-    Posicao VARCHAR (50),
-    Pe_dominante VARCHAR(50),
-    numero_camisa INT
-);
-
-INSERT into Jogador (Nome, Data_Nascimento, Nacionalidade, Posicao, Pe_Dominante, numero_camisa) VALUES ('Cristiano Ronaldo', '1985-02-05', 'Portugal', 'Atacante', 'Direito', 7);
-SELECT * FROM Jogador;
-
---tabela técnico------------------------------------
-
-drop table Tecnico;
-Create Table Tecnico(
-    id_tecnico INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    Nome VARCHAR(100),
-     Data_Nascimento Date,
-    Nacionalidade VARCHAR (50),
-    experiencia INT
-);
-SET @id_tecnico := LAST_INSERT_ID();
-insert into Tecnico (Nome, Data_Nascimento, Nacionalidade, experiencia) VALUES ( 'Carlo Ancelotti', '1959-06-10', 'Itália', 29);
-insert into Tecnico (Nome, Data_Nascimento, Nacionalidade, experiencia) VALUES ( 'António Oliveira', '1982-10-10', 'Portugal', 10);
+USE Campeonato_Futebol;
 
 --tabela clube--------------------------------------
-
-DROP TABLE Clube;
- CREATE TABLE Clube (
+DROP TABLE IF EXISTS Clube;
+ CREATE TABLE IF NOT EXISTS Clube (
     ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     nome VARCHAR(100) NOT NULL,
     escudo varchar(1000),
@@ -82,14 +52,47 @@ VALUES
    @id_tecnico
 );
 
-
 SELECT * FROM Clube;
+
+--Tabela jogador-------------------------------------------
+DROP TABLE IF EXISTS jogador ;
+CREATE TABLE IF NOT EXISTS Jogador (
+    ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL, 
+    Nome VARCHAR (100),
+    Data_Nascimento Date,
+    Nacionalidade VARCHAR (50),
+    Posicao VARCHAR (50),
+    Pe_dominante VARCHAR(50),
+    numero_camisa INT,
+    fk_clube INT,
+    -- chaves estrangeiras --
+    FOREIGN KEY (fk_clube) REFERENCES Clube(ID)
+);
+
+INSERT INTO Jogador (Nome, Data_Nascimento, Nacionalidade, Posicao, Pe_Dominante, numero_camisa) VALUES ('Cristiano Ronaldo', '1985-02-05', 'Portugal', 'Atacante', 'Direito', 7);
+SELECT * FROM Jogador;
+
+--tabela técnico------------------------------------
+DROP TABLE IF EXISTS Tecnico;
+CREATE TABLE IF NOT EXISTS Tecnico(
+    id_tecnico INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    Nome VARCHAR(100),
+    Data_Nascimento DATE,
+    Nacionalidade VARCHAR (50),
+    experiencia INT,
+    fk_clube INT,
+    -- chaves estrangeiras --
+    FOREIGN KEY (fk_clube) REFERENCES Clube(ID)
+);
+SET @id_tecnico := LAST_INSERT_ID();
+INSERT INTO Tecnico (Nome, Data_Nascimento, Nacionalidade, experiencia) VALUES ( 'Carlo Ancelotti', '1959-06-10', 'Itália', 29);
+INSERT INTO Tecnico (Nome, Data_Nascimento, Nacionalidade, experiencia) VALUES ( 'António Oliveira', '1982-10-10', 'Portugal', 10);
 
 --Tabela Estadio--------------------------------------------
 
-DROP TABLE Estadio;
+DROP TABLE IF EXISTS Estadio;
 
-CREATE Table Estadio(
+CREATE TABLE IF NOT EXISTS Estadio(
     ID_Estadio INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     nome VARCHAR(100),
     localizacao VARCHAR(100),
@@ -104,8 +107,8 @@ SELECT * FROM Estadio;
 
 --tabela Campeonato------------------------------
 
-DROP TABLE campeonato;
-CREATE Table Campeonato (
+DROP TABLE IF EXISTS campeonato;
+CREATE TABLE IF NOT EXISTS Campeonato (
     ID_Campeonato INT PRIMARY KEY AUTO_INCREMENT NOT NULL ,
     nome VARCHAR(100),
     ano INT,
@@ -132,3 +135,118 @@ INSERT INTO Campeonato (nome, ano, numero_de_times, categoria, local_realizado, 
 );
 
 SELECT * FROM Campeonato;
+
+-- tabela Partdida -------------------------------------
+DROP TABLE IF EXISTS Partida;
+CREATE TABLE IF NOT EXISTS Partida (
+    ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    data DATE,
+    hora TIME,
+    gols_timeMandante INT DEFAULT 0,
+    gols_timeVisitante INT DEFAULT 0,
+    fk_campeonato INT,
+    fk_estadio INT,
+    fk_timeMandante INT,
+    fk_timeVisitante INT,
+    -- chaves estrangeiras --
+    FOREIGN KEY (fk_campeonato) REFERENCES Campeonato(ID_Campeonato),
+    FOREIGN KEY (fk_estadio) REFERENCES Estadio(ID_Estadio),
+    FOREIGN KEY (fk_timeMandante) REFERENCES Clube(ID),
+    FOREIGN KEY (fk_timeVisitante) REFERENCES Clube(ID)
+);
+
+-- tabela Gols -------------------------------------
+DROP TABLE IF EXISTS Gols;
+CREATE TABLE IF NOT EXISTS Gols (
+    ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    minuto INT,
+    tipoGol VARCHAR(50),
+    fk_jogador INT,
+    fk_partida INT,
+    fk_clube INT,
+    -- chaves estrangeiras --
+    FOREIGN KEY (fk_jogador) REFERENCES Jogador(ID),
+    FOREIGN KEY (fk_partida) REFERENCES Partida(ID),
+    FOREIGN KEY (fk_clube) REFERENCES Clube(ID)
+);
+
+-- tabela Cartões -------------------------------------
+DROP TABLE IF EXISTS Cartoes;
+CREATE TABLE IF NOT EXISTS Cartoes (
+    ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    tipoCartao VARCHAR(50),
+    motivo VARCHAR(100),
+    fk_partida INT,
+    fk_jogador INT,
+    fk_clube INT,
+    -- chaves estrangeiras --
+    FOREIGN KEY (fk_jogador) REFERENCES Jogador(ID),
+    FOREIGN KEY (fk_partida) REFERENCES Partida(ID),
+    FOREIGN KEY (fk_clube) REFERENCES Clube(ID)
+);
+
+-- tabela Substituicao -------------------------------------
+DROP TABLE IF EXISTS Substituicao;
+CREATE TABLE IF NOT EXISTS Substituicao (
+    ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    minuto INT,
+    fk_jogador_saida INT,
+    fk_jogador_entrada INT,
+    fk_partida INT,
+    fk_clube INT,
+    -- chaves estrangeiras --
+    FOREIGN KEY (fk_jogador_saida) REFERENCES Jogador(ID),
+    FOREIGN KEY (fk_jogador_entrada) REFERENCES Jogador(ID),
+    FOREIGN KEY (fk_partida) REFERENCES Partida(ID),
+    FOREIGN KEY (fk_clube) REFERENCES Clube(ID)
+);
+
+-- TABELAS DE RELACIONAMENTO --------------------
+CREATE TABLE IF NOT EXISTS jogador_estadio (
+    ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    fk_jogador INT,
+    fk_estadio INT,
+    -- chaves estrangeiras --
+    FOREIGN KEY (fk_jogador) REFERENCES Jogador(ID),
+    FOREIGN KEY (fk_estadio) REFERENCES Estadio(ID_Estadio)
+);
+
+CREATE TABLE IF NOT EXISTS estadio_campeonato (
+    ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    fk_estadio INT,
+    fk_campeonato INT,
+    -- chaves estrangeiras --
+    FOREIGN KEY (fk_estadio) REFERENCES Estadio(ID_Estadio),
+    FOREIGN KEY (fk_campeonato) REFERENCES Campeonato(ID_Campeonato)
+);
+
+CREATE TABLE IF NOT EXISTS clube_campeonato (
+    ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    fk_clube INT,
+    fk_campeonato INT,
+    -- chaves estrangeiras --
+    FOREIGN KEY (fk_clube) REFERENCES Clube(ID),
+    FOREIGN KEY (fk_campeonato) REFERENCES Campeonato(ID_Campeonato)
+);
+
+CREATE TABLE IF NOT EXISTS jogador_campeonato (
+    ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    fk_jogador INT,
+    fk_campeonato INT,
+    golsMarcados INT DEFAULT 0,
+    -- chaves estrangeiras --
+    FOREIGN KEY (fk_jogador) REFERENCES Jogador(ID),
+    FOREIGN KEY (fk_campeonato) REFERENCES Campeonato(ID_Campeonato)
+);
+
+CREATE TABLE IF NOT EXISTS jogador_partida (
+    ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    fk_jogador INT,
+    fk_partida INT,
+    golsMarcados INT DEFAULT 0,
+    faltasCometidas INT DEFAULT 0,
+    faltasSofridas INT DEFAULT 0,
+    -- chaves estrangeiras --
+    FOREIGN KEY (fk_jogador) REFERENCES Jogador(ID),
+    FOREIGN KEY (fk_partida) REFERENCES Partida(ID)
+);  
