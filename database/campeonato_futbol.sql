@@ -3,64 +3,116 @@ CREATE DATABASE IF NOT EXISTS Campeonato_Futebol;
 drop DATABASE Campeonato_Futebol;
 USE Campeonato_Futebol;
 
+--tabela Campeonato------------------------------
+
+DROP TABLE IF EXISTS campeonato;
+CREATE TABLE IF NOT EXISTS Campeonato (
+    ID_Campeonato INT PRIMARY KEY AUTO_INCREMENT NOT NULL ,
+    nome VARCHAR(100),
+    ano INT,
+    local_realizado VARCHAR(100),
+    data_inicio DATE,
+    data_fim DATE
+);
+
+INSERT INTO Campeonato (nome, ano, local_realizado, data_inicio, data_fim)
+ VALUES 
+('Campeonato Inter-Estadual Brasileiro',
+    2025,
+    'Brasil',
+    '2025-04-13',
+    '2025-12-08'
+);
+
+
 --tabela clube--------------------------------------
 DROP TABLE IF EXISTS Clube;
  CREATE TABLE IF NOT EXISTS Clube (
     ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     nome VARCHAR(100) NOT NULL,
-    escudo varchar(1000),
-    apelido VARCHAR(50),
-    fundacao DATE,
-    pais varchar (100),
-    estado VARCHAR(100),
-    cidade VARCHAR(50),
-    estadio VARCHAR(50),
-    presidente VARCHAR(50),
-    tecnico_id INT
+    escudo varchar(1000)
 );
 SET @ID_Clube := LAST_INSERT_ID();
+INSERT INTO Clube (
+    nome, escudo
+)
+VALUES
+(  'Botafogo','https://ssl.gstatic.com/onebox/media/sports/logos/KLDWYp-H8CAOT9H_JgizRg_48x48.png'),
+( 'Palmeiras','https://ssl.gstatic.com/onebox/media/sports/logos/7spurne-xDt2p6C0imYYNA_48x48.png'),
+(  'Flamengo','https://ssl.gstatic.com/onebox/media/sports/logos/orE554NToSkH6nuwofe7Yg_48x48.png'),
+( 'Fortaleza','https://ssl.gstatic.com/onebox/media/sports/logos/me10ephzRxdj45zVq1Risg_48x48.png'),
+( 'Internacional','https://ssl.gstatic.com/onebox/media/sports/logos/OWVFKuHrQuf4q2Wk0hEmSA_48x48.png'),
+( 'São Paulo','https://ssl.gstatic.com/onebox/media/sports/logos/4w2Z97Hf9CSOqICK3a8AxQ_48x48.png'),
+(  'Corinthians','https://ssl.gstatic.com/onebox/media/sports/logos/tCMSqgXVHROpdCpQhzTo1g_48x48.png'),
+(  'Bahia','https://ssl.gstatic.com/onebox/media/sports/logos/nIdbR6qIUDyZUBO9vojSPw_48x48.png'),
+( 'Cruzeiro','https://ssl.gstatic.com/onebox/media/sports/logos/Tcv9X__nIh-6wFNJPMwIXQ_48x48.png'),
+(  'Vasco da Gama','https://ssl.gstatic.com/onebox/media/sports/logos/hHwT8LwRmYCAGxQ-STLxYA_48x48.png'),
+( 'EC Vitória','https://ssl.gstatic.com/onebox/media/sports/logos/LHSM6VchpkI4NIptoSTHOg_48x48.png'),
+(   'Atlético-MG','https://ssl.gstatic.com/onebox/media/sports/logos/q9fhEsgpuyRq58OgmSndcQ_48x48.png'),
+( 'Fluminense','https://ssl.gstatic.com/onebox/media/sports/logos/fCMxMMDF2AZPU7LzYKSlig_48x48.png'),
+('Grêmio','https://ssl.gstatic.com/onebox/media/sports/logos/Ku-73v_TW9kpex-IEGb0ZA_48x48.png'),
+('Juventude','https://ssl.gstatic.com/onebox/media/sports/logos/JrXw-m4Dov0gE2Sh6XJQMQ_48x48.png'),
+( 'Bragantino','https://ssl.gstatic.com/onebox/media/sports/logos/lMyw2zn1Z4cdkaxKJWnsQw_48x48.png'),
+( 'Atlético-PR','https://ssl.gstatic.com/onebox/media/sports/logos/9LkdBR4L5plovKM8eIy7nQ_48x48.png'),
+(  'Criciúma','https://ssl.gstatic.com/onebox/media/sports/logos/u_L7Mkp33uNmFTv3uUlXeQ_48x48.png'),
+( 'Atlético-GO','https://ssl.gstatic.com/onebox/media/sports/logos/9mqMGndwoR9og_Z0uEl2kw_48x48.png'),
+(  'Cuiabá','https://ssl.gstatic.com/onebox/media/sports/logos/j6U8Rgt_6yyf0Egs9nREXw_48x48.pngs');
 
-INSERT INTO Clube (
-    nome, escudo, apelido, fundacao, pais, estado, cidade, estadio, presidente, tecnico_id
-)
-VALUES
-(
-    'Atletico Mineiro',
-    '',
-    'Galo',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-   @id_tecnico
-);
-INSERT INTO Clube (
-    nome, escudo, apelido, fundacao, pais, estado, cidade, estadio, presidente, tecnico_id
-)
-VALUES
-(
-  ' Sport Club Corinthians Paulista',
-    'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/874.png',
-    'Timão',
-    '1910-09-01',
-    'Brasil',
-    'São Paulo',
-    'São Paulo',
-    'Neo Química Arena',
-    'Augusto Melo',
-   @id_tecnico
-);
 
 SELECT * FROM Clube;
+--rodada--------------------------------------
+CREATE table Rodada(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    numero_rodada INT,
+    data_começo DATE,
+    data_termino DATE,
+     FOREIGN KEY (fk_Campeonato) REFERENCES Campeonato(ID_Campeonato),    
+);
 
+INSERT INTO Rodada (numero_rodada, data_começo, data_termino, fk_Campeonato) VALUES
+(1, '2025-04-16','2025-04-20',1),
+(2, '2025-04-24', '2025-04-28',1),
+(3, '2025-04-02', '2025-04-04',1)
+()
+()
+()
+()
+()
+()
+()
+()
+()
+()
+()
+()
+()
+()
+()
+()
+()
+()
+()
+()
+()
+()
+()
+()
+()
+()
+()
+()
+()
+()
+()
+()
+()
+()
+()
 --Tabela jogador-------------------------------------------
 DROP TABLE IF EXISTS jogador ;
 CREATE TABLE IF NOT EXISTS Jogador (
     ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL, 
     Nome VARCHAR (100),
-    Data_Nascimento Date,
     Nacionalidade VARCHAR (50),
     Posicao VARCHAR (50),
     Pe_dominante VARCHAR(50),
@@ -69,7 +121,7 @@ CREATE TABLE IF NOT EXISTS Jogador (
     -- chaves estrangeiras --
     FOREIGN KEY (fk_clube) REFERENCES Clube(ID)
 );
-
+--
 INSERT INTO Jogador (Nome, Data_Nascimento, Nacionalidade, Posicao, Pe_Dominante, numero_camisa) VALUES ('Cristiano Ronaldo', '1985-02-05', 'Portugal', 'Atacante', 'Direito', 7);
 SELECT * FROM Jogador;
 
@@ -99,10 +151,6 @@ CREATE TABLE IF NOT EXISTS Arbitro(
     Nacionalidade VARCHAR (50),
     experiencia INT
 );
-
-INSERT INTO Arbitro (Nome, Data_Nascimento, Nacionalidade, experiencia) VALUES ('Anderson Daronco', '1981-11-10', 'Brasil', 15);
-
-INSERT INTO Arbitro (Nome, Data_Nascimento, Nacionalidade, experiencia) VALUES ('Wilton Pereira Sampaio', '1981-11-10', 'Brasil', 15);
 
 create table if not exists Arbitro_da_partida (
     ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
@@ -134,36 +182,6 @@ CREATE TABLE IF NOT EXISTS Estadio(
 INSERT INTO Estadio (nome, localizacao, data_construçao, capacidade, Clube_ID ) VALUES ('Santiago Bernabeu', 'Real Madrid', '1947-12-14', 83184, @ID_Clube);
 
 SELECT * FROM Estadio;
-
---tabela Campeonato------------------------------
-
-DROP TABLE IF EXISTS campeonato;
-CREATE TABLE IF NOT EXISTS Campeonato (
-    ID_Campeonato INT PRIMARY KEY AUTO_INCREMENT NOT NULL ,
-    nome VARCHAR(100),
-    ano INT,
-    numero_de_times INT,
-    categoria VARCHAR(70),
-    local_realizado VARCHAR(100),
-    data_inicio DATE,
-    data_fim DATE,
-    regulamento VARCHAR(100),
-    organizador VARCHAR(100)
-);
-
-INSERT INTO Campeonato (nome, ano, numero_de_times, categoria, local_realizado, data_inicio, data_fim, regulamento, organizador)
- VALUES 
-('Campeonato Brasileiro Série A',
-    2025,
-    20,
-    'Adulto Masculino',
-    'Brasil',
-    '2025-04-13',
-    '2025-12-08',
-    'Regulamento oficial disponível no site da CBF.',
-    'Confederação Brasileira de Futebol (CBF)'
-);
-
 SELECT * FROM Campeonato;
 
 -- tabela Partdida -------------------------------------
@@ -219,34 +237,6 @@ CREATE TABLE IF NOT EXISTS Cartoes (
     FOREIGN KEY (fk_clube) REFERENCES Clube(ID)
 );
 
--- tabela Substituicao -------------------------------------
-DROP TABLE IF EXISTS Substituicao;
-CREATE TABLE IF NOT EXISTS Substituicao (
-    ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    minuto INT,
-    fk_jogador_saida INT,
-    fk_jogador_entrada INT,
-    fk_partida INT,
-    fk_clube INT,
-    -- chaves estrangeiras --
-    FOREIGN KEY (fk_jogador_saida) REFERENCES Jogador(ID),
-    FOREIGN KEY (fk_jogador_entrada) REFERENCES Jogador(ID),
-    FOREIGN KEY (fk_partida) REFERENCES Partida(ID),
-    FOREIGN KEY (fk_clube) REFERENCES Clube(ID)
-);
-
--- TABELAS DE RELACIONAMENTO --------------------
-
---drop table if exists jogador_estadio;
---CREATE TABLE IF NOT EXISTS jogador_estadio (
---    ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
---    fk_jogador INT,
---    fk_estadio INT,
---    -- chaves estrangeiras --
---    FOREIGN KEY (fk_jogador) REFERENCES Jogador(ID),
---    FOREIGN KEY (fk_estadio) REFERENCES Estadio(ID_Estadio)
---);--
---
 
 DROP TABLE IF EXISTS estadio_campeonato;
 CREATE TABLE IF NOT EXISTS estadio_campeonato (
