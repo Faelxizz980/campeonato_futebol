@@ -1,6 +1,5 @@
 CREATE DATABASE IF NOT EXISTS Campeonato_Futebol;
-
-drop DATABASE Campeonato_Futebol;
+DROP DATABASE Campeonato_Futebol;
 USE Campeonato_Futebol;
 
 --tabela Campeonato------------------------------
@@ -27,7 +26,7 @@ INSERT INTO Campeonato (nome, ano, local_realizado, data_inicio, data_fim)
 
 --tabela clube--------------------------------------
 DROP TABLE IF EXISTS Clube;
- CREATE TABLE IF NOT EXISTS Clube (
+CREATE TABLE IF NOT EXISTS Clube (
     ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     nome VARCHAR(100) NOT NULL,
     escudo VARCHAR(5000) NOT NULL,
@@ -135,7 +134,7 @@ INSERT INTO Cartao (tipo, minuto, fk_partida, fk_jogador, fk_clube) VALUES
 
 --rodada--------------------------------------
 DROP TABLE IF EXISTS Rodada;
-CREATE table Rodada(
+CREATE TABLE IF NOT EXISTS Rodada(
     id INT AUTO_INCREMENT PRIMARY KEY,
     numero_rodada INT,
     data_começo DATE,
@@ -504,7 +503,6 @@ INSERT INTO Tecnico (Nome, Data_Nascimento, Nacionalidade, fk_clube) VALUES
 
 --Tabela Arbitro--------------------------------------------
 DROP TABLE IF EXISTS Arbitro;
-
 CREATE TABLE IF NOT EXISTS Arbitro(
     ID_Arbitro INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     Nome VARCHAR(100),
@@ -513,7 +511,24 @@ CREATE TABLE IF NOT EXISTS Arbitro(
     experiencia INT
 );
 
-create table if not exists Arbitro_da_partida (
+INSERT INTO Arbitro (Nome, Data_Nascimento, Nacionalidade, experiencia) VALUES
+('Wilton Pereira Sampaio', '1982-12-28', 'Brasileiro', 10),
+('Raphael Claus', '1983-05-15', 'Brasileiro', 8),
+('Anderson Daronco', '1982-09-16', 'Brasileiro', 12),
+('Bruno Arleu de Araújo', '1985-03-01', 'Brasileiro', 7),
+('Rodrigo Carvalhaes de Miranda', '1984-11-20', 'Brasileiro', 9),
+('Leandro Pedro Vuaden', '1980-01-01', 'Brasileiro', 11),
+('Sandro Meira Ricci', '1974-09-10', 'Brasileiro', 15),
+('Paulo César de Oliveira', '1965-05-20', 'Brasileiro', 20),
+('Ricardo Marques Ribeiro', '1981-07-01', 'Brasileiro', 14),
+('Flávio Rodrigues de Souza', '1983-04-10', 'Brasileiro', 6),
+('Márcio Henrique de Gois', '1980-08-15', 'Brasileiro', 5),
+('Thiago Duarte Peixoto', '1986-02-20', 'Brasileiro', 4),
+('Rafael Traci', '1981-11-30', 'Brasileiro', 3),
+('Jean Pierre Gonçalves Lima', '1982-06-10', 'Brasileiro', 2),
+('Wilmar Roldán', '1978-01-01', 'Colombiano', 1);
+
+CREATE TABLE IF NOT EXISTS Arbitro_da_partida (
     ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     fk_arbitro INT,
     fk_partida INT,
