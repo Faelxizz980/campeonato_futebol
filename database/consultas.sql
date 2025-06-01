@@ -65,12 +65,12 @@ SELECT
     P.data,
     CM.nome AS clubeMandante,
     CV.nome AS clubeVisitante,
-    A.nome
+    A.nome AS arbitro
 FROM
     partida P
 INNER JOIN
     clube CM ON P.fk_clubeMandante = CM.id
 INNER JOIN
-    clube CC ON P.fk_clubeVisitante = CC.id
+    clube CV ON P.fk_clubeVisitante = C.id
 INNER JOIN
-    arbitro A ON P.fk_arbitro = A.id;
+    arbitro A ON P.fk_arbitro = A.id_arbitro;
