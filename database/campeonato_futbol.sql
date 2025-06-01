@@ -1,9 +1,9 @@
+-- ÁREA DE CRIAÇÃO DO BANCO DE DADOS --------------------------------------------
 CREATE DATABASE IF NOT EXISTS Campeonato_Futebol;
 DROP DATABASE Campeonato_Futebol;
 USE Campeonato_Futebol;
 
---tabela Campeonato------------------------------
-
+-- TABELA CAMPEONATO --------------------------------------------
 DROP TABLE IF EXISTS campeonato;
 CREATE TABLE IF NOT EXISTS Campeonato (
     ID_Campeonato INT PRIMARY KEY AUTO_INCREMENT NOT NULL ,
@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS Campeonato (
     data_fim DATE
 );
 
+-- inserts --
 INSERT INTO Campeonato (nome, ano, local_realizado, data_inicio, data_fim)
  VALUES 
 ('Campeonato Inter-Estadual Brasileiro',
@@ -23,8 +24,46 @@ INSERT INTO Campeonato (nome, ano, local_realizado, data_inicio, data_fim)
     '2025-12-08'
 );
 
+-- TABELA ESTADIO --------------------------------------------
+DROP TABLE IF EXISTS Estadio;
+CREATE TABLE IF NOT EXISTS Estadio(
+    ID_Estadio INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    nome_estadio VARCHAR(100),
+    localizacao VARCHAR(100),
+    data_construçao DATE,
+    capacidade INT
+);
+SET @ID_Estadio := LAST_INSERT_ID();
 
---tabela clube--------------------------------------
+-- inserts --
+INSERT INTO Estadio (nome, localizacao, data_construçao, capacidade) VALUES
+('Estádio Nilton Santos', 'Rio de Janeiro', '2007-06-30', 46731), -- Botafogo
+('Allianz Parque', 'São Paulo', '2014-11-19', 43713), -- Palmeiras
+('Maracanã', 'Rio de Janeiro', '1950-06-16', 78838), -- Flamengo
+('Arena Castelão', 'Fortaleza', '1973-11-11', 63903), -- Fortaleza
+('Beira-Rio', 'Porto Alegre', '1969-04-06', 50000), -- Internacional
+('Morumbi', 'São Paulo', '1960-10-02', 66795), -- São Paulo
+('Neo Química Arena', 'São Paulo', '2014-05-10', 49205), -- Corinthians
+('Fonte Nova', 'Salvador', '1951-01-28', 50000), -- Bahia
+('Mineirão', 'Belo Horizonte', '1965-09-05', 61846), -- Cruzeiro
+('São Januário', 'Rio de Janeiro', '1927-04-21', 21880), -- Vasco da Gama
+('Barradão', 'Salvador', '1986-11-11', 35000), -- EC Vitória
+('Mineirão', 'Belo Horizonte', '1965-09-05', 61846), -- Atlético-MG
+('Maracanã', 'Rio de Janeiro', '1950-06-16', 78838), -- Fluminense
+('Arena do Grêmio', 'Porto Alegre', '2012-12-08', 60540), -- Grêmio
+('Alfredo Jaconi', 'Caxias do Sul', '1975-03-23', 30519), -- Juventude
+('Nabi Abi Chedid', 'Bragança Paulista', '1949-01-06', 17724), -- Bragantino
+('Arena da Baixada', 'Curitiba', '1914-06-06', 42372), -- Atlético-PR
+('Heriberto Hülse', 'Criciúma', '1955-10-16', 19300), -- Criciúma
+('Antônio Accioly', 'Goiânia', '2018-08-18', 12500), -- Atlético-GO
+('Arena Pantanal', 'Cuiabá', '2014-04-26', 44003), -- Cuiabá
+('Vila Belmiro', 'Santos', '1916-10-12', 16068), -- Santos
+('Couto Pereira', 'Curitiba', '1932-11-20', 40502), -- Coritiba
+('Ilha do Retiro', 'Recife', '1937-07-04', 32000), -- Sport Recife
+('Arena Condá', 'Chapecó', '2009-02-01', 20089); -- Chapecoense
+SELECT * FROM Estadio;
+
+-- TABELA CLUBE --------------------------------------
 DROP TABLE IF EXISTS Clube;
 CREATE TABLE IF NOT EXISTS Clube (
     ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
@@ -35,6 +74,8 @@ CREATE TABLE IF NOT EXISTS Clube (
     Num_titulos INT DEFAULT 0
 );
 SET @ID_Clube := LAST_INSERT_ID();
+
+-- inserts --
 INSERT INTO Clube (
     nome, escudo, presidente, data_fundacao, Num_titulos
 )
@@ -61,415 +102,7 @@ VALUES
 ('Chapecoense','https://ssl.gstatic.com/onebox/media/sports/logos/K7JQUKTRsuXfO9YrD5dq5g_48x48.png','Paulo Magro', '1973-05-10', 0);
 SELECT * FROM Clube;
 
-
-
--- Tabela de Gol--------------------------------------
-DROP TABLE IF EXISTS Gol;
-CREATE TABLE IF NOT EXISTS Gol (
-    ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    minuto INT,
-    tipo VARCHAR(50), -- Ex: 'Normal', 'Pênalti', 'Contra'
-    fk_partida INT,
-    fk_jogador INT,
-    fk_clube INT,
-    fk_arbitro INT,
-    -- chaves estrangeiras --
-    FOREIGN KEY (fk_partida) REFERENCES Partida(ID),
-    FOREIGN KEY (fk_jogador) REFERENCES Jogador(ID),
-    FOREIGN KEY (fk_clube) REFERENCES Clube(ID),
-    FOREIGN KEY (fk_arbitro) REFERENCES Arbitro(ID_Arbitro) -- Descomente se houver tabela de árbitros
-);
-
-INSERT INTO Gol (minuto, tipo, fk_partida, fk_jogador, fk_clube, fk_arbitro) VALUES
-(12, 'Normal', 1, 10, 1, 1), -- Exemplo: Tiquinho Soares (Botafogo) marcou aos 12 do 1º tempo na partida 1
-(45, 'Pênalti', 1, 11, 2, 2), -- Exemplo: Rony (Palmeiras) marcou de pênalti aos 45 do 1º tempo na partida 1
-(67, 'Normal', 2, 10, 3, 3), -- Gabriel Barbosa (Flamengo) marcou aos 67 do 2º tempo na partida 2
-(23, 'Contra', 3, 5, 6, 4), -- Luciano (São Paulo) gol contra aos 23 do 1º tempo na partida 3
-(78, 'Normal', 4, 9, 4, 5), -- Marinho (Fortaleza) marcou aos 78 do 2º tempo na partida 4
-(15, 'Pênalti', 5, 3, 5, 6), -- Vitão (Internacional) marcou de pênalti aos 15 do 1º tempo na partida 5
-(90, 'Normal', 6, 7, 6, 7), -- Luciano (São Paulo) marcou aos 90 do 2º tempo na partida 6
-(34, 'Normal', 7, 8, 7, 8), -- Wesley (Corinthians) marcou aos 34 do 1º tempo na partida 7
-(50, 'Contra', 8, 2, 8, 9), -- Gilberto (Bahia) gol contra aos 50 do 2º tempo na partida 8
-(22, 'Normal', 9, 4, 9, 10), -- Enner Valencia (Internacional) marcou aos 22 do 1º tempo na partida 9
-(60, 'Pênalti', 10, 6, 10, 11), -- Calleri (São Paulo) marcou de pênalti aos 60 do 2º tempo na partida 10
-(88, 'Normal', 11, 5, 11, 12), -- Fabricio Bustos (Internacional) marcou aos 88 do 2º tempo na partida 11
-(40, 'Contra', 12, 1, 12, 13), -- Gatito Fernández (Botafogo) gol contra aos 40 do 1º tempo na partida 12
-(30, 'Normal', 13, 2, 13, 14), -- Marcos Rocha (Palmeiras) marcou aos 30 do 1º tempo na partida 13
-(75, 'Pênalti', 14, 3, 14, 15), -- Rossi (Flamengo) marcou de pênalti aos 75 do 2º tempo na partida 14
-(55, 'Normal', 15, 4, 1, 1), -- Tinga (Fortaleza) marcou aos 55 do 2º tempo na partida 15
-(10, 'Contra', 16, 6, 16, 1); -- Arboleda (São Paulo) gol contra aos 10 do 1º tempo na partida 16
-
-SELECT * FROM Gol;
-
--- Tabela de Cartão
-DROP TABLE IF EXISTS Cartao;
-CREATE TABLE IF NOT EXISTS Cartao (
-    ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    tipo VARCHAR(20), -- Ex: 'Amarelo', 'Vermelho'
-    minuto INT,
-    fk_partida INT,
-    fk_jogador INT,
-    fk_clube INT,
-    -- chaves estrangeiras --
-    FOREIGN KEY (fk_partida) REFERENCES Partida(ID),
-    FOREIGN KEY (fk_jogador) REFERENCES Jogador(ID),
-    FOREIGN KEY (fk_clube) REFERENCES Clube(ID)
-);
-
--- Cartões
-INSERT INTO Cartao (tipo, minuto, fk_partida, fk_jogador, fk_clube) VALUES
-('Amarelo', 30, 1, 6, 1), -- Marlon Freitas (Botafogo) levou amarelo aos 30 do 1º tempo na partida 1
-('Vermelho', 80, 2, 7, 4), -- Pochettino (Fortaleza) levou vermelho aos 80 do 2º tempo na partida 2
-('Amarelo', 55, 3, 3, 5), -- Vitão (Internacional) levou amarelo aos 55 do 2º tempo na partida 3
-('Amarelo', 12, 4, 2, 8), -- Gilberto (Bahia) levou amarelo aos 12 do 1º tempo na partida 4
-('Vermelho', 90, 5, 4, 9), -- Enner Valencia (Internacional) levou vermelho aos 90 do 2º tempo na partida 5
-('Amarelo', 45, 6, 5, 10), -- Fabricio Bustos (Internacional) levou amarelo aos 45 do 1º tempo na partida 6
-('Amarelo', 20, 7, 8, 11), -- Wesley (Corinthians) levou amarelo aos 20 do 1º tempo na partida 7
-('Vermelho', 70, 8, 9, 12), -- Tinga (Fortaleza) levou vermelho aos 70 do 2º tempo na partida 8
-('Amarelo', 15, 9, 10, 13), -- Calleri (São Paulo) levou amarelo aos 15 do 1º tempo na partida 9
-('Amarelo', 60, 10, 11, 14), -- Rossi (Flamengo) levou amarelo aos 60 do 2º tempo na partida 10
-('Vermelho', 50, 11, 12, 15), -- Gatito Fernández (Botafogo) levou vermelho aos 50 do 2º tempo na partida 11
-('Amarelo', 25, 12, 13, 16), -- Arboleda (São Paulo) levou amarelo aos 25 do primeiro tempo na partida12
-('Amarelo', 35, 13, 14, 17), -- Calleri (São Paulo) levou amarelo aos 35 do primeiro tempo na partida13
-('Vermelho', 65, 14, 15, 18), -- Rossi (Flamengo) levou vermelho aos 65 do segundo tempo na partida14
-('Amarelo', 45, 15, 16, 19), -- Gatito Fernández (Botafogo) levou amarelo aos 45 do primeiro tempo na partida15
-('Amarelo', 55, 16, 17, 20); -- Arboleda (São Paulo) levou amarelo aos 55 do segundo tempo na partida16
-
-
-
---rodada--------------------------------------
-DROP TABLE IF EXISTS Rodada;
-CREATE TABLE IF NOT EXISTS Rodada(
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    numero_rodada INT,
-    data_começo DATE,
-    data_termino DATE,
-    fk_Campeonato INT,
-     FOREIGN KEY (fk_Campeonato) REFERENCES Campeonato(ID_Campeonato)  
-);
-SET @id := LAST_INSERT_ID();
-
-INSERT INTO Rodada (numero_rodada, data_começo, data_termino, fk_Campeonato) VALUES
-(1,  '2025-04-16', '2025-04-20', 1),
-(2,  '2025-04-21', '2025-04-25', 1),
-(3,  '2025-04-26', '2025-04-30', 1),
-(4,  '2025-05-01', '2025-05-05', 1),
-(5,  '2025-05-06', '2025-05-10', 1),
-(6,  '2025-05-11', '2025-05-15', 1),
-(7,  '2025-05-16', '2025-05-20', 1),
-(8,  '2025-05-21', '2025-05-25', 1),
-(9,  '2025-05-26', '2025-05-30', 1),
-(10, '2025-05-31', '2025-06-04', 1),
-(11, '2025-06-05', '2025-06-09', 1),
-(12, '2025-06-10', '2025-06-14', 1),
-(13, '2025-06-15', '2025-06-19', 1),
-(14, '2025-06-20', '2025-06-24', 1),
-(15, '2025-06-25', '2025-06-29', 1),
-(16, '2025-06-30', '2025-07-04', 1),
-(17, '2025-07-05', '2025-07-09', 1),
-(18, '2025-07-10', '2025-07-14', 1),
-(19, '2025-07-15', '2025-07-19', 1),
-(20, '2025-07-20', '2025-07-24', 1),
-(21, '2025-07-25', '2025-07-29', 1),
-(22, '2025-07-30', '2025-08-03', 1),
-(23, '2025-08-04', '2025-08-08', 1),
-(24, '2025-08-09', '2025-08-13', 1),
-(25, '2025-08-14', '2025-08-18', 1),
-(26, '2025-08-19', '2025-08-23', 1),
-(27, '2025-08-24', '2025-08-28', 1),
-(28, '2025-08-29', '2025-09-02', 1),
-(29, '2025-09-03', '2025-09-07', 1),
-(30, '2025-09-08', '2025-09-12', 1),
-(31, '2025-09-13', '2025-09-17', 1),
-(32, '2025-09-18', '2025-09-22', 1),
-(33, '2025-09-23', '2025-09-27', 1),
-(34, '2025-09-28', '2025-10-02', 1),
-(35, '2025-10-03', '2025-10-07', 1),
-(36, '2025-10-08', '2025-10-12', 1),
-(37, '2025-10-13', '2025-10-17', 1),
-(38, '2025-10-18', '2025-10-22', 1);
---Tabela jogador-------------------------------------------
-DROP TABLE IF EXISTS jogador ;
-CREATE TABLE IF NOT EXISTS Jogador (
-    ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL, 
-    Nome VARCHAR (100),
-    Nacionalidade VARCHAR (50),
-    Posicao VARCHAR (50),
-    Pe_dominante VARCHAR(50),
-    numero_camisa INT,
-    fk_clube INT,
-    -- chaves estrangeiras --
-    FOREIGN KEY (fk_clube) REFERENCES Clube(ID)
-);
-
-SELECT * from jogador;
-----Botafogo-----------------------------------
-INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
-('Gatito Fernández', 'Paraguai', 'Goleiro', 'Direito', 1, 1),
-('Di Plácido', 'Argentina', 'Lateral Direito', 'Direito', 24, 1),
-('Adryelson', 'Brasil', 'Zagueiro', 'Direito', 34, 1),
-('Victor Cuesta', 'Argentina', 'Zagueiro', 'Esquerdo', 15, 1),
-('Hugo', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 16, 1),
-('Marlon Freitas', 'Brasil', 'Volante', 'Direito', 17, 1),
-('Tchê Tchê', 'Brasil', 'Meia', 'Direito', 6, 1),
-('Eduardo', 'Brasil', 'Meia', 'Direito', 33, 1),
-('Luiz Henrique', 'Brasil', 'Atacante', 'Esquerdo', 7, 1),
-('Júnior Santos', 'Brasil', 'Atacante', 'Direito', 11, 1),
-('Tiquinho Soares', 'Brasil', 'Atacante', 'Direito', 9, 1);
-
-----Palmeiras-----------------------------------
-INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
-('Weverton', 'Brasil', 'Goleiro', 'Direito', 21, 2),
-('Marcos Rocha', 'Brasil', 'Lateral Direito', 'Direito', 2, 2),
-('Gustavo Gómez', 'Paraguai', 'Zagueiro', 'Direito', 15, 2),
-('Murilo', 'Brasil', 'Zagueiro', 'Esquerdo', 26, 2),
-('Piquerez', 'Uruguai', 'Lateral Esquerdo', 'Esquerdo', 22, 2),
-('Zé Rafael', 'Brasil', 'Volante', 'Esquerdo', 8, 2),
-('Richard Ríos', 'Colômbia', 'Volante', 'Direito', 27, 2),
-('Raphael Veiga', 'Brasil', 'Meia', 'Direito', 23, 2),
-('Mayke', 'Brasil', 'Lateral', 'Direito', 12, 2),
-('Endrick', 'Brasil', 'Atacante', 'Esquerdo', 9, 2),
-('Rony', 'Brasil', 'Atacante', 'Direito', 10, 2);
-
-----Flamengo-----------------------------------
-INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
-('Rossi', 'Brasil', 'Goleiro', 'Direito', 1, 3),
-('Varela', 'Uruguai', 'Lateral Direito', 'Direito', 2, 3),
-('Fabrício Bruno', 'Brasil', 'Zagueiro', 'Direito', 15, 3),
-('Léo Pereira', 'Brasil', 'Zagueiro', 'Esquerdo', 4, 3),
-('Ayrton Lucas', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 6, 3),
-('Allan', 'Brasil', 'Volante', 'Direito', 21, 3),
-('De la Cruz', 'Uruguai', 'Meia', 'Direito', 18, 3),
-('Arrascaeta', 'Uruguai', 'Meia', 'Esquerdo', 14, 3),
-('Everton Cebolinha', 'Brasil', 'Atacante', 'Direito', 11, 3),
-('Pedro', 'Brasil', 'Atacante', 'Direito', 9, 3),
-('Gabriel Barbosa', 'Brasil', 'Atacante', 'Esquerdo', 10, 3);
-----Fortaleza-----------------------------------
-INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
-('João Ricardo', 'Brasil', 'Goleiro', 'Direito', 1, 4),
-('Tinga', 'Brasil', 'Lateral Direito', 'Direito', 2, 4),
-('Titi', 'Brasil', 'Zagueiro', 'Esquerdo', 4, 4),
-('Brítez', 'Argentina', 'Zagueiro', 'Direito', 19, 4),
-('Bruno Pacheco', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 6, 4),
-('Caio Alexandre', 'Brasil', 'Volante', 'Direito', 8, 4),
-('Zé Welison', 'Brasil', 'Volante', 'Direito', 17, 4),
-('Pochettino', 'Argentina', 'Meia', 'Direito', 7, 4),
-('Yago Pikachu', 'Brasil', 'Meia', 'Direito', 22, 4),
-('Lucero', 'Argentina', 'Atacante', 'Direito', 9, 4),
-('Marinho', 'Brasil', 'Atacante', 'Esquerdo', 11, 4);
-
-----Internacional-----------------------------------
-INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
-('Sergio Rochet', 'Uruguai', 'Goleiro', 'Direito', 33, 5),
-('Fabricio Bustos', 'Argentina', 'Lateral Direito', 'Direito', 16, 5),
-('Vitão', 'Brasil', 'Zagueiro', 'Direito', 44, 5),
-('Mercado', 'Argentina', 'Zagueiro', 'Direito', 25, 5),
-('Renê', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 6, 5),
-('Aránguiz', 'Chile', 'Volante', 'Direito', 20, 5),
-('Bruno Henrique', 'Brasil', 'Volante', 'Direito', 8, 5),
-('Alan Patrick', 'Brasil', 'Meia', 'Esquerdo', 10, 5),
-('Maurício', 'Brasil', 'Meia', 'Direito', 27, 5),
-('Wanderson', 'Brasil', 'Atacante', 'Esquerdo', 11, 5),
-('Enner Valencia', 'Equador', 'Atacante', 'Direito', 13, 5);
-----São Paulo-----------------------------------
-INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
-('Rafael', 'Brasil', 'Goleiro', 'Direito', 23, 6),
-('Rafinha', 'Brasil', 'Lateral Direito', 'Direito', 13, 6),
-('Arboleda', 'Equador', 'Zagueiro', 'Direito', 5, 6),
-('Alan Franco', 'Argentina', 'Zagueiro', 'Esquerdo', 28, 6),
-('Welington', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 6, 6),
-('Alisson', 'Brasil', 'Meia', 'Direito', 25, 6),
-('Pablo Maia', 'Brasil', 'Volante', 'Direito', 29, 6),
-('Rodrigo Nestor', 'Brasil', 'Meia', 'Esquerdo', 11, 6),
-('Luciano', 'Brasil', 'Atacante', 'Direito', 10, 6),
-('Calleri', 'Argentina', 'Atacante', 'Esquerdo', 9, 6),
-('Ferraresi', 'Venezuela', 'Zagueiro', 'Direito', 32, 6);
-----Corinthians-----------------------------------
-INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
-('Cássio', 'Brasil', 'Goleiro', 'Direito', 12, 7),
-('Fagner', 'Brasil', 'Lateral Direito', 'Direito', 23, 7),
-('Félix Torres', 'Equador', 'Zagueiro', 'Direito', 3, 7),
-('Gustavo Henrique', 'Brasil', 'Zagueiro', 'Direito', 4, 7),
-('Hugo', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 46, 7),
-('Raniele', 'Brasil', 'Volante', 'Direito', 14, 7),
-('Maycon', 'Brasil', 'Meia', 'Esquerdo', 7, 7),
-('Fausto Vera', 'Argentina', 'Meia', 'Direito', 5, 7),
-('Wesley', 'Brasil', 'Atacante', 'Direito', 36, 7),
-('Pedro Raul', 'Brasil', 'Atacante', 'Direito', 9, 7),
-('Yuri Alberto', 'Brasil', 'Atacante', 'Direito', 9, 7);
-----Bahia-----------------------------------
-INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
-('Marcos Felipe', 'Brasil', 'Goleiro', 'Direito', 1, 8),
-('Gilberto', 'Brasil', 'Lateral Direito', 'Direito', 2, 8),
-('Kanu', 'Brasil', 'Zagueiro', 'Direito', 4, 8),
-('Victor Cuesta', 'Argentina', 'Zagueiro', 'Esquerdo', 33, 8),
-('Luciano Juba', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 6, 8),
-('Caio Alexandre', 'Brasil', 'Volante', 'Direito', 8, 8),
-('Jean Lucas', 'Brasil', 'Meia', 'Direito', 6, 8),
-('Cauly', 'Brasil', 'Meia', 'Direito', 8, 8),
-('Everton Ribeiro', 'Brasil', 'Meia', 'Esquerdo', 10, 8),
-('Biel', 'Brasil', 'Atacante', 'Esquerdo', 11, 8),
-('Everton', 'Brasil', 'Atacante', 'Direito', 7, 8);
-----Cruzeiro-----------------------------------
-INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
-('Rafael Cabral', 'Brasil', 'Goleiro', 'Direito', 1, 9),
-('Raúl Cáceres', 'Paraguai', 'Lateral Direito', 'Direito', 2, 9),
-('Eduardo Brock', 'Brasil', 'Zagueiro', 'Esquerdo', 4, 9),
-('Luciano Castán', 'Brasil', 'Zagueiro', 'Direito', 3, 9),
-('Matheus Pereira', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 6, 9),
-('Felipe Machado', 'Brasil', 'Volante', 'Direito', 5, 9),
-('Lucas Oliveira', 'Brasil', 'Meia', 'Direito', 8, 9),
-('Matheus Vital', 'Brasil', 'Meia', 'Esquerdo', 10, 9),
-('Bruno Rodrigues', 'Brasil', 'Atacante', 'Esquerdo', 11, 9),
-('Eduardo Vargas', 'Chile', 'Atacante', 'Direito', 7, 9),
-('Rodolfo Pagliuca Júnior','Brasil','Atacante','Direito' ,20 ,9);
-----Vasco da Gama-----------------------------------
-INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
-('Léo Jardim', 'Brasil', 'Goleiro', 'Direito', 1, 10),
-('Puma Rodríguez', 'Uruguai', 'Lateral Direito', 'Direito', 2, 10),
-('Léo', 'Brasil', 'Zagueiro', 'Esquerdo', 3, 10),
-('Medel', 'Chile', 'Zagueiro', 'Direito', 17, 10),
-('Lucas Piton', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 6, 10),
-('Zé Gabriel', 'Brasil', 'Volante', 'Direito', 23, 10),
-('Sforza', 'Argentina', 'Volante', 'Direito', 8, 10),
-('Payet', 'França', 'Meia', 'Direito', 10, 10),
-('Galdames', 'Chile', 'Meia', 'Direito', 27, 10),
-('Adson', 'Brasil', 'Atacante', 'Esquerdo', 28, 10),
-('Vegetti', 'Argentina', 'Atacante', 'Direito', 99, 10);
-----EC Vitória-----------------------------------
-INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
-('Lucas Arcanjo', 'Brasil', 'Goleiro', 'Direito', 1, 11),
-('Zeca', 'Brasil', 'Lateral Direito', 'Direito', 2, 11),
-('Wagner Leonardo', 'Brasil', 'Zagueiro', 'Esquerdo', 4, 11),
-('João Victor', 'Brasil', 'Zagueiro', 'Direito', 13, 11),
-('Patric Calmon', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 6, 11),
-('Dudu', 'Brasil', 'Volante', 'Direito', 5, 11),
-('Rodrigo Andrade', 'Brasil', 'Meia', 'Direito', 8, 11),
-('Matheusinho', 'Brasil', 'Meia', 'Esquerdo', 10, 11),
-('Osvaldo', 'Brasil', 'Atacante', 'Direito', 11, 11),
-('Iury Castilho', 'Brasil', 'Atacante', 'Direito', 9, 11),
-('Caio Dantas', 'Brasil', 'Atacante', 'Esquerdo', 99, 11);
-----Atlético-MG-----------------------------------
-INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
-('Everson', 'Brasil', 'Goleiro', 'Esquerdo', 22, 12),
-('Saravia', 'Argentina', 'Lateral Direito', 'Direito', 26, 12),
-('Bruno Fuchs', 'Brasil', 'Zagueiro', 'Direito', 3, 12),
-('Mauricio Lemos', 'Uruguai', 'Zagueiro', 'Direito', 4, 12),
-('Guilherme Arana', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 13, 12),
-('Otávio', 'Brasil', 'Volante', 'Direito', 5, 12),
-('Battaglia', 'Argentina', 'Volante', 'Direito', 21, 12),
-('Paulinho', 'Brasil', 'Meia', 'Esquerdo', 10, 12),
-('Zaracho', 'Argentina', 'Meia', 'Direito', 15, 12),
-('Hulk', 'Brasil', 'Atacante', 'Esquerdo', 7, 12),
-('Eduardo Vargas', 'Chile', 'Atacante', 'Direito', 11, 12);
-----Fluminense-----------------------------------
-INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
-('Fábio', 'Brasil', 'Goleiro', 'Direito', 1, 13),
-('Samuel Xavier', 'Brasil', 'Lateral Direito', 'Direito', 2, 13),
-('Felipe Melo', 'Brasil', 'Zagueiro', 'Esquerdo', 30, 13),
-('Manoel', 'Brasil', 'Zagueiro', 'Direito', 26, 13),
-('Marcelo', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 12, 13),
-('André', 'Brasil', 'Volante', 'Direito', 7, 13),
-('Martinelli', 'Brasil', 'Volante', 'Direito', 8, 13),
-('Ganso', 'Brasil', 'Meia', 'Esquerdo', 10, 13),
-('Arias', 'Colômbia', 'Meia', 'Esquerdo', 21, 13),
-('Keno', 'Brasil', 'Atacante', 'Direito', 11, 13),
-('Germán Cano', 'Argentina', 'Atacante', 'Direito', 14, 13);
-----Grêmio-----------------------------------
-INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
-('Marchesín', 'Argentina', 'Goleiro', 'Direito', 1, 14),
-('João Pedro', 'Brasil', 'Lateral Direito', 'Direito', 18, 14),
-('Kannemann', 'Argentina', 'Zagueiro', 'Esquerdo', 4, 14),
-('Rodrigo Ely', 'Brasil', 'Zagueiro', 'Direito', 34, 14),
-('Reinaldo', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 6, 14),
-('Pepê', 'Brasil', 'Volante', 'Esquerdo', 23, 14),
-('Carballo', 'Uruguai', 'Volante', 'Direito', 8, 14),
-('Cristaldo', 'Argentina', 'Meia', 'Esquerdo', 10, 14),
-('Franco Cristaldo', 'Argentina', 'Meia', 'Esquerdo', 19, 14),
-('Soteldo', 'Venezuela', 'Atacante', 'Esquerdo', 7, 14),
-('Diego Costa', 'Brasil', 'Atacante', 'Direito', 19, 14);
-----Bragantino-----------------------------------
-INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
-('Cleiton', 'Brasil', 'Goleiro', 'Direito', 18, 15),
-('Aderlan', 'Brasil', 'Lateral Direito', 'Direito', 13, 15),
-('Léo Ortiz', 'Brasil', 'Zagueiro', 'Direito', 3, 15),
-('Eduardo Santos', 'Brasil', 'Zagueiro', 'Esquerdo', 14, 15),
-('Juninho Capixaba', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 29, 15),
-('Jadsom Silva', 'Brasil', 'Volante', 'Direito', 5, 15),
-('Eric Ramires', 'Brasil', 'Meia', 'Direito', 8, 15),
-('Lucas Evangelista', 'Brasil', 'Meia', 'Direito', 8, 15),
-('Helinho', 'Brasil', 'Atacante', 'Esquerdo', 11, 15),
-('Eduardo Sasha', 'Brasil', 'Atacante', 'Direito', 19, 15),
-('Thiago Borbas', 'Uruguai', 'Atacante', 'Direito', 9, 15);
-----Atlético-PR-----------------------------------
-INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
-('Bento', 'Brasil', 'Goleiro', 'Direito', 1, 16),
-('Madson', 'Brasil', 'Lateral Direito', 'Direito', 23, 16),
-('Thiago Heleno', 'Brasil', 'Zagueiro', 'Direito', 44, 16),
-('Kaique Rocha', 'Brasil', 'Zagueiro', 'Esquerdo', 4, 16),
-('Vinicius Kauê', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 16, 16),
-('Fernandinho', 'Brasil', 'Volante', 'Direito', 5, 16),
-('Erick', 'Brasil', 'Volante', 'Direito', 26, 16),
-('Christian', 'Brasil', 'Meia', 'Esquerdo', 88, 16),
-('Vitor Bueno', 'Brasil', 'Meia', 'Direito', 8, 16),
-('Canobbio', 'Uruguai', 'Atacante', 'Direito', 9, 16),
-('Pablo', 'Brasil', 'Atacante', 'Direito', 92, 16);
-----Atlético-GO-----------------------------------
-INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
-('Ronaldo', 'Brasil', 'Goleiro', 'Direito', 1, 17),
-('Bruno Tubarão', 'Brasil', 'Lateral Direito', 'Direito', 2, 17),
-('Alix', 'Brasil', 'Zagueiro', 'Direito', 4, 17),
-('Lucas Rocha', 'Brasil', 'Zagueiro', 'Esquerdo', 3, 17),
-('Guilherme Romão', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 6, 17),
-('Rhaldney', 'Brasil', 'Volante', 'Direito', 5, 17),
-('Baralhas', 'Brasil', 'Meia', 'Direito', 8, 17),
-('Shaylon', 'Brasil', 'Meia', 'Esquerdo', 10, 17),
-('Luiz Fernando', 'Brasil', 'Atacante', 'Direito', 11, 17),
-('Derek', 'Brasil', 'Atacante', 'Direito', 9, 17),
-('Vagner Love', 'Brasil', 'Atacante', 'Direito', 99, 17);
-----Cuiabá-----------------------------------
-INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
-('Walter', 'Brasil', 'Goleiro', 'Direito', 1, 18),
-('Matheus Alexandre', 'Brasil', 'Lateral Direito', 'Direito', 2, 18),
-('Alan Empereur', 'Brasil', 'Zagueiro', 'Esquerdo', 4, 18),
-('Marllon', 'Brasil', 'Zagueiro', 'Direito', 3, 18),
-('Patric Calmon', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 6, 18),
-('Denilson', 'Brasil', 'Volante', 'Direito', 8, 18),
-('Raniele', 'Brasil', 'Volante', 'Direito', 5, 18),
-('Clayson', 'Brasil', 'Meia', 'Esquerdo', 10, 18),
-('Lucas Fernandes', 'Brasil', 'Meia', 'Direito', 7, 18),
-('Deyverson', 'Brasil', 'Atacante', 'Esquerdo', 9, 18),
-('Isidro Pitta', 'Paraguai', 'Atacante', 'Direito', 19, 18);
-----Santos-----------------------------------
-INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
-('João Paulo', 'Brasil', 'Goleiro', 'Direito', 1, 19),
-('Aderlan', 'Brasil', 'Lateral Direito', 'Direito', 2, 19),
-('Gil', 'Brasil', 'Zagueiro', 'Direito', 4, 19),
-('Joaquim', 'Brasil', 'Zagueiro', 'Esquerdo', 28, 19),
-('Felipe Jonatan', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 3, 19),
-('Tomás Rincón', 'Venezuela', 'Volante', 'Direito', 8, 19),
-('Diego Pituca', 'Brasil', 'Volante', 'Esquerdo', 21, 19),
-('Giuliano', 'Brasil', 'Meia', 'Direito', 10, 19),
-('Neymar', 'Brasil', 'Atacante', 'Destro', 11, 19),
-('Otero', 'Venezuela', 'Meia', 'Direito', 7, 19),
-('Julio Furch', 'Argentina', 'Atacante', 'Direito', 9, 19);
-
-----Chapecoense----------------------------------0
-INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
-('Airton', 'Brasil', 'Goleiro', 'Direito', 1, 20),
-('Cristovam', 'Brasil', 'Lateral Direito', 'Direito', 2, 20),
-('Joilson', 'Brasil', 'Zagueiro', 'Direito', 3, 20),
-('Victor Ramos', 'Brasil', 'Zagueiro', 'Esquerdo', 4, 20),
-('Fernando', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 6, 20),
-('Ralf', 'Brasil', 'Volante', 'Direito', 5, 20),
-('Bruno Silva', 'Brasil', 'Volante', 'Direito', 8, 20),
-('Marcinho', 'Brasil', 'Meia', 'Direito', 10, 20),
-('Felipe Ferreira', 'Brasil', 'Meia', 'Esquerdo', 11, 20),
-('Perotti', 'Brasil', 'Atacante', 'Direito', 9, 20),
-('Maxwell', 'Brasil', 'Atacante', 'Esquerdo', 7, 20);
---tabela técnico------------------------------------
-
-SELECT * from jogador;
+-- TABELA TÉCNICO --------------------------------------
 DROP TABLE IF EXISTS Tecnico;
 CREATE TABLE IF NOT EXISTS Tecnico(
     id_tecnico INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
@@ -483,7 +116,7 @@ CREATE TABLE IF NOT EXISTS Tecnico(
 );
 SET @id_tecnico := LAST_INSERT_ID();
 
-
+-- inserts --
 INSERT INTO Tecnico (Nome, Data_Nascimento, Nacionalidade, fk_clube) VALUES
 ('Renato Paiva','1970-03-22' ,'Portuguesa', 1 ),
 ('Abel Ferreira','1978-12-22','Portuguesa',2 ),
@@ -506,7 +139,7 @@ INSERT INTO Tecnico (Nome, Data_Nascimento, Nacionalidade, fk_clube) VALUES
 ('Cléber Xavier','1964-03-29','Brasileiro',19 ),
 ('Gilmar Dal Pozzo','1969-09-01','Brasileiro',20 );
 
---Tabela Arbitro--------------------------------------------
+-- TABELA ARBITRO --------------------------------------------
 DROP TABLE IF EXISTS Arbitro;
 CREATE TABLE IF NOT EXISTS Arbitro(
     ID_Arbitro INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
@@ -515,7 +148,7 @@ CREATE TABLE IF NOT EXISTS Arbitro(
     Nacionalidade VARCHAR (50),
     experiencia INT
 );
-
+-- inserts --
 INSERT INTO Arbitro (Nome, Data_Nascimento, Nacionalidade, experiencia) VALUES
 ('Wilton Pereira Sampaio', '1982-12-28', 'Brasileiro', 10),
 ('Raphael Claus', '1983-05-15', 'Brasileiro', 8),
@@ -533,61 +166,7 @@ INSERT INTO Arbitro (Nome, Data_Nascimento, Nacionalidade, experiencia) VALUES
 ('Jean Pierre Gonçalves Lima', '1982-06-10', 'Brasileiro', 2),
 ('Wilmar Roldán', '1978-01-01', 'Colombiano', 1);
 
-CREATE TABLE IF NOT EXISTS Arbitro_da_partida (
-    ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    fk_arbitro INT,
-    fk_partida INT,
-    -- chaves estrangeiras --
-    FOREIGN KEY (fk_arbitro) REFERENCES Arbitro(ID_Arbitro),
-    FOREIGN KEY (fk_partida) REFERENCES Partida(ID)
-);
-
-INSERT INTO Arbitro_da_partida (fk_arbitro, fk_partida) VALUES (1, 1);
-INSERT INTO Arbitro_da_partida (fk_arbitro, fk_partida) VALUES (2, 1);
-
-
-
---Tabela Estadio--------------------------------------------
-DROP TABLE IF EXISTS Estadio;
-
-CREATE TABLE IF NOT EXISTS Estadio(
-    ID_Estadio INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    nome_estadio VARCHAR(100),
-    localizacao VARCHAR(100),
-    data_construçao DATE,
-    capacidade INT
-);
-SET @ID_Estadio := LAST_INSERT_ID();
-
-INSERT INTO Estadio (nome, localizacao, data_construçao, capacidade) VALUES
-('Estádio Nilton Santos', 'Rio de Janeiro', '2007-06-30', 46731), -- Botafogo
-('Allianz Parque', 'São Paulo', '2014-11-19', 43713), -- Palmeiras
-('Maracanã', 'Rio de Janeiro', '1950-06-16', 78838), -- Flamengo
-('Arena Castelão', 'Fortaleza', '1973-11-11', 63903), -- Fortaleza
-('Beira-Rio', 'Porto Alegre', '1969-04-06', 50000), -- Internacional
-('Morumbi', 'São Paulo', '1960-10-02', 66795), -- São Paulo
-('Neo Química Arena', 'São Paulo', '2014-05-10', 49205), -- Corinthians
-('Fonte Nova', 'Salvador', '1951-01-28', 50000), -- Bahia
-('Mineirão', 'Belo Horizonte', '1965-09-05', 61846), -- Cruzeiro
-('São Januário', 'Rio de Janeiro', '1927-04-21', 21880), -- Vasco da Gama
-('Barradão', 'Salvador', '1986-11-11', 35000), -- EC Vitória
-('Mineirão', 'Belo Horizonte', '1965-09-05', 61846), -- Atlético-MG
-('Maracanã', 'Rio de Janeiro', '1950-06-16', 78838), -- Fluminense
-('Arena do Grêmio', 'Porto Alegre', '2012-12-08', 60540), -- Grêmio
-('Alfredo Jaconi', 'Caxias do Sul', '1975-03-23', 30519), -- Juventude
-('Nabi Abi Chedid', 'Bragança Paulista', '1949-01-06', 17724), -- Bragantino
-('Arena da Baixada', 'Curitiba', '1914-06-06', 42372), -- Atlético-PR
-('Heriberto Hülse', 'Criciúma', '1955-10-16', 19300), -- Criciúma
-('Antônio Accioly', 'Goiânia', '2018-08-18', 12500), -- Atlético-GO
-('Arena Pantanal', 'Cuiabá', '2014-04-26', 44003), -- Cuiabá
-('Vila Belmiro', 'Santos', '1916-10-12', 16068), -- Santos
-('Couto Pereira', 'Curitiba', '1932-11-20', 40502), -- Coritiba
-('Ilha do Retiro', 'Recife', '1937-07-04', 32000), -- Sport Recife
-('Arena Condá', 'Chapecó', '2009-02-01', 20089); -- Chapecoense
-
-SELECT * FROM Estadio;
-
--- Tabela Partida -------------------------------------
+-- TABELA PARTIDA -------------------------------------
 DROP TABLE IF EXISTS Partida;
 CREATE TABLE IF NOT EXISTS Partida (
     ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
@@ -612,6 +191,7 @@ ALTER TABLE partida
 ADD COLUMN fk_arbitro INT,
 ADD CONSTRAINT fk_arbitro FOREIGN KEY (fk_arbitro) REFERENCES arbitro(ID_Arbitro);
 
+-- inserts --
 INSERT INTO Partida (resultado_jogo, data, hora, gols_timeMandante, gols_timeVisitante, fk_campeonato, fk_estadio, fk_timeMandante, fk_timeVisitante, fk_arbitro)
 VALUES 
 ('2-1', '2025-04-16', '16:00:00', 2, 1, 1, 1, 1, 2, 7),
@@ -1141,7 +721,432 @@ VALUES
 ('2-0', '2025-10-22', '18:30:00', 2, 0, 1, 9, 9, 17),
 ('3-2', '2025-10-22', '20:30:00', 3, 2, 1, 10, 10, 18);
 
-SELECT * FROM Partida;
+-- TABELA RODADA --------------------------------------
+DROP TABLE IF EXISTS Rodada;
+CREATE TABLE IF NOT EXISTS Rodada(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    numero_rodada INT,
+    data_começo DATE,
+    data_termino DATE,
+    fk_Campeonato INT,
+    -- chave estrangeira -- 
+    FOREIGN KEY (fk_Campeonato) REFERENCES Campeonato(ID_Campeonato)  
+);
+SET @id := LAST_INSERT_ID();
+
+-- inserts --
+INSERT INTO Rodada (numero_rodada, data_começo, data_termino, fk_Campeonato) VALUES
+(1,  '2025-04-16', '2025-04-20', 1),
+(2,  '2025-04-21', '2025-04-25', 1),
+(3,  '2025-04-26', '2025-04-30', 1),
+(4,  '2025-05-01', '2025-05-05', 1),
+(5,  '2025-05-06', '2025-05-10', 1),
+(6,  '2025-05-11', '2025-05-15', 1),
+(7,  '2025-05-16', '2025-05-20', 1),
+(8,  '2025-05-21', '2025-05-25', 1),
+(9,  '2025-05-26', '2025-05-30', 1),
+(10, '2025-05-31', '2025-06-04', 1),
+(11, '2025-06-05', '2025-06-09', 1),
+(12, '2025-06-10', '2025-06-14', 1),
+(13, '2025-06-15', '2025-06-19', 1),
+(14, '2025-06-20', '2025-06-24', 1),
+(15, '2025-06-25', '2025-06-29', 1),
+(16, '2025-06-30', '2025-07-04', 1),
+(17, '2025-07-05', '2025-07-09', 1),
+(18, '2025-07-10', '2025-07-14', 1),
+(19, '2025-07-15', '2025-07-19', 1),
+(20, '2025-07-20', '2025-07-24', 1),
+(21, '2025-07-25', '2025-07-29', 1),
+(22, '2025-07-30', '2025-08-03', 1),
+(23, '2025-08-04', '2025-08-08', 1),
+(24, '2025-08-09', '2025-08-13', 1),
+(25, '2025-08-14', '2025-08-18', 1),
+(26, '2025-08-19', '2025-08-23', 1),
+(27, '2025-08-24', '2025-08-28', 1),
+(28, '2025-08-29', '2025-09-02', 1),
+(29, '2025-09-03', '2025-09-07', 1),
+(30, '2025-09-08', '2025-09-12', 1),
+(31, '2025-09-13', '2025-09-17', 1),
+(32, '2025-09-18', '2025-09-22', 1),
+(33, '2025-09-23', '2025-09-27', 1),
+(34, '2025-09-28', '2025-10-02', 1),
+(35, '2025-10-03', '2025-10-07', 1),
+(36, '2025-10-08', '2025-10-12', 1),
+(37, '2025-10-13', '2025-10-17', 1),
+(38, '2025-10-18', '2025-10-22', 1);
+
+-- TABELA JOGADOR -------------------------------------------
+DROP TABLE IF EXISTS jogador ;
+CREATE TABLE IF NOT EXISTS Jogador (
+    ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL, 
+    Nome VARCHAR (100),
+    Nacionalidade VARCHAR (50),
+    Posicao VARCHAR (50),
+    Pe_dominante VARCHAR(50),
+    numero_camisa INT,
+    fk_clube INT,
+    -- chaves estrangeiras --
+    FOREIGN KEY (fk_clube) REFERENCES Clube(ID)
+);
+
+SELECT * from jogador;
+
+-- inserts --
+----Botafogo-----------------------------------
+INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
+('Gatito Fernández', 'Paraguai', 'Goleiro', 'Direito', 1, 1),
+('Di Plácido', 'Argentina', 'Lateral Direito', 'Direito', 24, 1),
+('Adryelson', 'Brasil', 'Zagueiro', 'Direito', 34, 1),
+('Victor Cuesta', 'Argentina', 'Zagueiro', 'Esquerdo', 15, 1),
+('Hugo', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 16, 1),
+('Marlon Freitas', 'Brasil', 'Volante', 'Direito', 17, 1),
+('Tchê Tchê', 'Brasil', 'Meia', 'Direito', 6, 1),
+('Eduardo', 'Brasil', 'Meia', 'Direito', 33, 1),
+('Luiz Henrique', 'Brasil', 'Atacante', 'Esquerdo', 7, 1),
+('Júnior Santos', 'Brasil', 'Atacante', 'Direito', 11, 1),
+('Tiquinho Soares', 'Brasil', 'Atacante', 'Direito', 9, 1);
+
+----Palmeiras-----------------------------------
+INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
+('Weverton', 'Brasil', 'Goleiro', 'Direito', 21, 2),
+('Marcos Rocha', 'Brasil', 'Lateral Direito', 'Direito', 2, 2),
+('Gustavo Gómez', 'Paraguai', 'Zagueiro', 'Direito', 15, 2),
+('Murilo', 'Brasil', 'Zagueiro', 'Esquerdo', 26, 2),
+('Piquerez', 'Uruguai', 'Lateral Esquerdo', 'Esquerdo', 22, 2),
+('Zé Rafael', 'Brasil', 'Volante', 'Esquerdo', 8, 2),
+('Richard Ríos', 'Colômbia', 'Volante', 'Direito', 27, 2),
+('Raphael Veiga', 'Brasil', 'Meia', 'Direito', 23, 2),
+('Mayke', 'Brasil', 'Lateral', 'Direito', 12, 2),
+('Endrick', 'Brasil', 'Atacante', 'Esquerdo', 9, 2),
+('Rony', 'Brasil', 'Atacante', 'Direito', 10, 2);
+
+----Flamengo-----------------------------------
+INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
+('Rossi', 'Brasil', 'Goleiro', 'Direito', 1, 3),
+('Varela', 'Uruguai', 'Lateral Direito', 'Direito', 2, 3),
+('Fabrício Bruno', 'Brasil', 'Zagueiro', 'Direito', 15, 3),
+('Léo Pereira', 'Brasil', 'Zagueiro', 'Esquerdo', 4, 3),
+('Ayrton Lucas', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 6, 3),
+('Allan', 'Brasil', 'Volante', 'Direito', 21, 3),
+('De la Cruz', 'Uruguai', 'Meia', 'Direito', 18, 3),
+('Arrascaeta', 'Uruguai', 'Meia', 'Esquerdo', 14, 3),
+('Everton Cebolinha', 'Brasil', 'Atacante', 'Direito', 11, 3),
+('Pedro', 'Brasil', 'Atacante', 'Direito', 9, 3),
+('Gabriel Barbosa', 'Brasil', 'Atacante', 'Esquerdo', 10, 3);
+----Fortaleza-----------------------------------
+INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
+('João Ricardo', 'Brasil', 'Goleiro', 'Direito', 1, 4),
+('Tinga', 'Brasil', 'Lateral Direito', 'Direito', 2, 4),
+('Titi', 'Brasil', 'Zagueiro', 'Esquerdo', 4, 4),
+('Brítez', 'Argentina', 'Zagueiro', 'Direito', 19, 4),
+('Bruno Pacheco', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 6, 4),
+('Caio Alexandre', 'Brasil', 'Volante', 'Direito', 8, 4),
+('Zé Welison', 'Brasil', 'Volante', 'Direito', 17, 4),
+('Pochettino', 'Argentina', 'Meia', 'Direito', 7, 4),
+('Yago Pikachu', 'Brasil', 'Meia', 'Direito', 22, 4),
+('Lucero', 'Argentina', 'Atacante', 'Direito', 9, 4),
+('Marinho', 'Brasil', 'Atacante', 'Esquerdo', 11, 4);
+
+----Internacional-----------------------------------
+INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
+('Sergio Rochet', 'Uruguai', 'Goleiro', 'Direito', 33, 5),
+('Fabricio Bustos', 'Argentina', 'Lateral Direito', 'Direito', 16, 5),
+('Vitão', 'Brasil', 'Zagueiro', 'Direito', 44, 5),
+('Mercado', 'Argentina', 'Zagueiro', 'Direito', 25, 5),
+('Renê', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 6, 5),
+('Aránguiz', 'Chile', 'Volante', 'Direito', 20, 5),
+('Bruno Henrique', 'Brasil', 'Volante', 'Direito', 8, 5),
+('Alan Patrick', 'Brasil', 'Meia', 'Esquerdo', 10, 5),
+('Maurício', 'Brasil', 'Meia', 'Direito', 27, 5),
+('Wanderson', 'Brasil', 'Atacante', 'Esquerdo', 11, 5),
+('Enner Valencia', 'Equador', 'Atacante', 'Direito', 13, 5);
+----São Paulo-----------------------------------
+INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
+('Rafael', 'Brasil', 'Goleiro', 'Direito', 23, 6),
+('Rafinha', 'Brasil', 'Lateral Direito', 'Direito', 13, 6),
+('Arboleda', 'Equador', 'Zagueiro', 'Direito', 5, 6),
+('Alan Franco', 'Argentina', 'Zagueiro', 'Esquerdo', 28, 6),
+('Welington', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 6, 6),
+('Alisson', 'Brasil', 'Meia', 'Direito', 25, 6),
+('Pablo Maia', 'Brasil', 'Volante', 'Direito', 29, 6),
+('Rodrigo Nestor', 'Brasil', 'Meia', 'Esquerdo', 11, 6),
+('Luciano', 'Brasil', 'Atacante', 'Direito', 10, 6),
+('Calleri', 'Argentina', 'Atacante', 'Esquerdo', 9, 6),
+('Ferraresi', 'Venezuela', 'Zagueiro', 'Direito', 32, 6);
+----Corinthians-----------------------------------
+INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
+('Cássio', 'Brasil', 'Goleiro', 'Direito', 12, 7),
+('Fagner', 'Brasil', 'Lateral Direito', 'Direito', 23, 7),
+('Félix Torres', 'Equador', 'Zagueiro', 'Direito', 3, 7),
+('Gustavo Henrique', 'Brasil', 'Zagueiro', 'Direito', 4, 7),
+('Hugo', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 46, 7),
+('Raniele', 'Brasil', 'Volante', 'Direito', 14, 7),
+('Maycon', 'Brasil', 'Meia', 'Esquerdo', 7, 7),
+('Fausto Vera', 'Argentina', 'Meia', 'Direito', 5, 7),
+('Wesley', 'Brasil', 'Atacante', 'Direito', 36, 7),
+('Pedro Raul', 'Brasil', 'Atacante', 'Direito', 9, 7),
+('Yuri Alberto', 'Brasil', 'Atacante', 'Direito', 9, 7);
+----Bahia-----------------------------------
+INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
+('Marcos Felipe', 'Brasil', 'Goleiro', 'Direito', 1, 8),
+('Gilberto', 'Brasil', 'Lateral Direito', 'Direito', 2, 8),
+('Kanu', 'Brasil', 'Zagueiro', 'Direito', 4, 8),
+('Victor Cuesta', 'Argentina', 'Zagueiro', 'Esquerdo', 33, 8),
+('Luciano Juba', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 6, 8),
+('Caio Alexandre', 'Brasil', 'Volante', 'Direito', 8, 8),
+('Jean Lucas', 'Brasil', 'Meia', 'Direito', 6, 8),
+('Cauly', 'Brasil', 'Meia', 'Direito', 8, 8),
+('Everton Ribeiro', 'Brasil', 'Meia', 'Esquerdo', 10, 8),
+('Biel', 'Brasil', 'Atacante', 'Esquerdo', 11, 8),
+('Everton', 'Brasil', 'Atacante', 'Direito', 7, 8);
+----Cruzeiro-----------------------------------
+INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
+('Rafael Cabral', 'Brasil', 'Goleiro', 'Direito', 1, 9),
+('Raúl Cáceres', 'Paraguai', 'Lateral Direito', 'Direito', 2, 9),
+('Eduardo Brock', 'Brasil', 'Zagueiro', 'Esquerdo', 4, 9),
+('Luciano Castán', 'Brasil', 'Zagueiro', 'Direito', 3, 9),
+('Matheus Pereira', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 6, 9),
+('Felipe Machado', 'Brasil', 'Volante', 'Direito', 5, 9),
+('Lucas Oliveira', 'Brasil', 'Meia', 'Direito', 8, 9),
+('Matheus Vital', 'Brasil', 'Meia', 'Esquerdo', 10, 9),
+('Bruno Rodrigues', 'Brasil', 'Atacante', 'Esquerdo', 11, 9),
+('Eduardo Vargas', 'Chile', 'Atacante', 'Direito', 7, 9),
+('Rodolfo Pagliuca Júnior','Brasil','Atacante','Direito' ,20 ,9);
+----Vasco da Gama-----------------------------------
+INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
+('Léo Jardim', 'Brasil', 'Goleiro', 'Direito', 1, 10),
+('Puma Rodríguez', 'Uruguai', 'Lateral Direito', 'Direito', 2, 10),
+('Léo', 'Brasil', 'Zagueiro', 'Esquerdo', 3, 10),
+('Medel', 'Chile', 'Zagueiro', 'Direito', 17, 10),
+('Lucas Piton', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 6, 10),
+('Zé Gabriel', 'Brasil', 'Volante', 'Direito', 23, 10),
+('Sforza', 'Argentina', 'Volante', 'Direito', 8, 10),
+('Payet', 'França', 'Meia', 'Direito', 10, 10),
+('Galdames', 'Chile', 'Meia', 'Direito', 27, 10),
+('Adson', 'Brasil', 'Atacante', 'Esquerdo', 28, 10),
+('Vegetti', 'Argentina', 'Atacante', 'Direito', 99, 10);
+----EC Vitória-----------------------------------
+INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
+('Lucas Arcanjo', 'Brasil', 'Goleiro', 'Direito', 1, 11),
+('Zeca', 'Brasil', 'Lateral Direito', 'Direito', 2, 11),
+('Wagner Leonardo', 'Brasil', 'Zagueiro', 'Esquerdo', 4, 11),
+('João Victor', 'Brasil', 'Zagueiro', 'Direito', 13, 11),
+('Patric Calmon', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 6, 11),
+('Dudu', 'Brasil', 'Volante', 'Direito', 5, 11),
+('Rodrigo Andrade', 'Brasil', 'Meia', 'Direito', 8, 11),
+('Matheusinho', 'Brasil', 'Meia', 'Esquerdo', 10, 11),
+('Osvaldo', 'Brasil', 'Atacante', 'Direito', 11, 11),
+('Iury Castilho', 'Brasil', 'Atacante', 'Direito', 9, 11),
+('Caio Dantas', 'Brasil', 'Atacante', 'Esquerdo', 99, 11);
+----Atlético-MG-----------------------------------
+INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
+('Everson', 'Brasil', 'Goleiro', 'Esquerdo', 22, 12),
+('Saravia', 'Argentina', 'Lateral Direito', 'Direito', 26, 12),
+('Bruno Fuchs', 'Brasil', 'Zagueiro', 'Direito', 3, 12),
+('Mauricio Lemos', 'Uruguai', 'Zagueiro', 'Direito', 4, 12),
+('Guilherme Arana', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 13, 12),
+('Otávio', 'Brasil', 'Volante', 'Direito', 5, 12),
+('Battaglia', 'Argentina', 'Volante', 'Direito', 21, 12),
+('Paulinho', 'Brasil', 'Meia', 'Esquerdo', 10, 12),
+('Zaracho', 'Argentina', 'Meia', 'Direito', 15, 12),
+('Hulk', 'Brasil', 'Atacante', 'Esquerdo', 7, 12),
+('Eduardo Vargas', 'Chile', 'Atacante', 'Direito', 11, 12);
+----Fluminense-----------------------------------
+INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
+('Fábio', 'Brasil', 'Goleiro', 'Direito', 1, 13),
+('Samuel Xavier', 'Brasil', 'Lateral Direito', 'Direito', 2, 13),
+('Felipe Melo', 'Brasil', 'Zagueiro', 'Esquerdo', 30, 13),
+('Manoel', 'Brasil', 'Zagueiro', 'Direito', 26, 13),
+('Marcelo', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 12, 13),
+('André', 'Brasil', 'Volante', 'Direito', 7, 13),
+('Martinelli', 'Brasil', 'Volante', 'Direito', 8, 13),
+('Ganso', 'Brasil', 'Meia', 'Esquerdo', 10, 13),
+('Arias', 'Colômbia', 'Meia', 'Esquerdo', 21, 13),
+('Keno', 'Brasil', 'Atacante', 'Direito', 11, 13),
+('Germán Cano', 'Argentina', 'Atacante', 'Direito', 14, 13);
+----Grêmio-----------------------------------
+INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
+('Marchesín', 'Argentina', 'Goleiro', 'Direito', 1, 14),
+('João Pedro', 'Brasil', 'Lateral Direito', 'Direito', 18, 14),
+('Kannemann', 'Argentina', 'Zagueiro', 'Esquerdo', 4, 14),
+('Rodrigo Ely', 'Brasil', 'Zagueiro', 'Direito', 34, 14),
+('Reinaldo', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 6, 14),
+('Pepê', 'Brasil', 'Volante', 'Esquerdo', 23, 14),
+('Carballo', 'Uruguai', 'Volante', 'Direito', 8, 14),
+('Cristaldo', 'Argentina', 'Meia', 'Esquerdo', 10, 14),
+('Franco Cristaldo', 'Argentina', 'Meia', 'Esquerdo', 19, 14),
+('Soteldo', 'Venezuela', 'Atacante', 'Esquerdo', 7, 14),
+('Diego Costa', 'Brasil', 'Atacante', 'Direito', 19, 14);
+----Bragantino-----------------------------------
+INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
+('Cleiton', 'Brasil', 'Goleiro', 'Direito', 18, 15),
+('Aderlan', 'Brasil', 'Lateral Direito', 'Direito', 13, 15),
+('Léo Ortiz', 'Brasil', 'Zagueiro', 'Direito', 3, 15),
+('Eduardo Santos', 'Brasil', 'Zagueiro', 'Esquerdo', 14, 15),
+('Juninho Capixaba', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 29, 15),
+('Jadsom Silva', 'Brasil', 'Volante', 'Direito', 5, 15),
+('Eric Ramires', 'Brasil', 'Meia', 'Direito', 8, 15),
+('Lucas Evangelista', 'Brasil', 'Meia', 'Direito', 8, 15),
+('Helinho', 'Brasil', 'Atacante', 'Esquerdo', 11, 15),
+('Eduardo Sasha', 'Brasil', 'Atacante', 'Direito', 19, 15),
+('Thiago Borbas', 'Uruguai', 'Atacante', 'Direito', 9, 15);
+----Atlético-PR-----------------------------------
+INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
+('Bento', 'Brasil', 'Goleiro', 'Direito', 1, 16),
+('Madson', 'Brasil', 'Lateral Direito', 'Direito', 23, 16),
+('Thiago Heleno', 'Brasil', 'Zagueiro', 'Direito', 44, 16),
+('Kaique Rocha', 'Brasil', 'Zagueiro', 'Esquerdo', 4, 16),
+('Vinicius Kauê', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 16, 16),
+('Fernandinho', 'Brasil', 'Volante', 'Direito', 5, 16),
+('Erick', 'Brasil', 'Volante', 'Direito', 26, 16),
+('Christian', 'Brasil', 'Meia', 'Esquerdo', 88, 16),
+('Vitor Bueno', 'Brasil', 'Meia', 'Direito', 8, 16),
+('Canobbio', 'Uruguai', 'Atacante', 'Direito', 9, 16),
+('Pablo', 'Brasil', 'Atacante', 'Direito', 92, 16);
+----Atlético-GO-----------------------------------
+INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
+('Ronaldo', 'Brasil', 'Goleiro', 'Direito', 1, 17),
+('Bruno Tubarão', 'Brasil', 'Lateral Direito', 'Direito', 2, 17),
+('Alix', 'Brasil', 'Zagueiro', 'Direito', 4, 17),
+('Lucas Rocha', 'Brasil', 'Zagueiro', 'Esquerdo', 3, 17),
+('Guilherme Romão', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 6, 17),
+('Rhaldney', 'Brasil', 'Volante', 'Direito', 5, 17),
+('Baralhas', 'Brasil', 'Meia', 'Direito', 8, 17),
+('Shaylon', 'Brasil', 'Meia', 'Esquerdo', 10, 17),
+('Luiz Fernando', 'Brasil', 'Atacante', 'Direito', 11, 17),
+('Derek', 'Brasil', 'Atacante', 'Direito', 9, 17),
+('Vagner Love', 'Brasil', 'Atacante', 'Direito', 99, 17);
+----Cuiabá-----------------------------------
+INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
+('Walter', 'Brasil', 'Goleiro', 'Direito', 1, 18),
+('Matheus Alexandre', 'Brasil', 'Lateral Direito', 'Direito', 2, 18),
+('Alan Empereur', 'Brasil', 'Zagueiro', 'Esquerdo', 4, 18),
+('Marllon', 'Brasil', 'Zagueiro', 'Direito', 3, 18),
+('Patric Calmon', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 6, 18),
+('Denilson', 'Brasil', 'Volante', 'Direito', 8, 18),
+('Raniele', 'Brasil', 'Volante', 'Direito', 5, 18),
+('Clayson', 'Brasil', 'Meia', 'Esquerdo', 10, 18),
+('Lucas Fernandes', 'Brasil', 'Meia', 'Direito', 7, 18),
+('Deyverson', 'Brasil', 'Atacante', 'Esquerdo', 9, 18),
+('Isidro Pitta', 'Paraguai', 'Atacante', 'Direito', 19, 18);
+----Santos-----------------------------------
+INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
+('João Paulo', 'Brasil', 'Goleiro', 'Direito', 1, 19),
+('Aderlan', 'Brasil', 'Lateral Direito', 'Direito', 2, 19),
+('Gil', 'Brasil', 'Zagueiro', 'Direito', 4, 19),
+('Joaquim', 'Brasil', 'Zagueiro', 'Esquerdo', 28, 19),
+('Felipe Jonatan', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 3, 19),
+('Tomás Rincón', 'Venezuela', 'Volante', 'Direito', 8, 19),
+('Diego Pituca', 'Brasil', 'Volante', 'Esquerdo', 21, 19),
+('Giuliano', 'Brasil', 'Meia', 'Direito', 10, 19),
+('Neymar', 'Brasil', 'Atacante', 'Destro', 11, 19),
+('Otero', 'Venezuela', 'Meia', 'Direito', 7, 19),
+('Julio Furch', 'Argentina', 'Atacante', 'Direito', 9, 19);
+
+----Chapecoense----------------------------------0
+INSERT INTO Jogador (Nome, Nacionalidade, Posicao, Pe_dominante, numero_camisa, fk_clube) VALUES
+('Airton', 'Brasil', 'Goleiro', 'Direito', 1, 20),
+('Cristovam', 'Brasil', 'Lateral Direito', 'Direito', 2, 20),
+('Joilson', 'Brasil', 'Zagueiro', 'Direito', 3, 20),
+('Victor Ramos', 'Brasil', 'Zagueiro', 'Esquerdo', 4, 20),
+('Fernando', 'Brasil', 'Lateral Esquerdo', 'Esquerdo', 6, 20),
+('Ralf', 'Brasil', 'Volante', 'Direito', 5, 20),
+('Bruno Silva', 'Brasil', 'Volante', 'Direito', 8, 20),
+('Marcinho', 'Brasil', 'Meia', 'Direito', 10, 20),
+('Felipe Ferreira', 'Brasil', 'Meia', 'Esquerdo', 11, 20),
+('Perotti', 'Brasil', 'Atacante', 'Direito', 9, 20),
+('Maxwell', 'Brasil', 'Atacante', 'Esquerdo', 7, 20);
+
+SELECT * from jogador;
+
+-- TABELA GOL --------------------------------------
+DROP TABLE IF EXISTS Gol;
+CREATE TABLE IF NOT EXISTS Gol (
+    ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    minuto INT,
+    tipo VARCHAR(50), -- Ex: 'Normal', 'Pênalti', 'Contra'
+    fk_partida INT,
+    fk_jogador INT,
+    fk_clube INT,
+    fk_arbitro INT,
+    -- chaves estrangeiras --
+    FOREIGN KEY (fk_partida) REFERENCES Partida(ID),
+    FOREIGN KEY (fk_jogador) REFERENCES Jogador(ID),
+    FOREIGN KEY (fk_clube) REFERENCES Clube(ID),
+    FOREIGN KEY (fk_arbitro) REFERENCES Arbitro(ID_Arbitro)
+);
+
+-- inserts --
+INSERT INTO Gol (minuto, tipo, fk_partida, fk_jogador, fk_clube, fk_arbitro) VALUES
+(12, 'Normal', 1, 10, 1, 1), -- Exemplo: Tiquinho Soares (Botafogo) marcou aos 12 do 1º tempo na partida 1
+(45, 'Pênalti', 1, 11, 2, 2), -- Exemplo: Rony (Palmeiras) marcou de pênalti aos 45 do 1º tempo na partida 1
+(67, 'Normal', 2, 10, 3, 3), -- Gabriel Barbosa (Flamengo) marcou aos 67 do 2º tempo na partida 2
+(23, 'Contra', 3, 5, 6, 4), -- Luciano (São Paulo) gol contra aos 23 do 1º tempo na partida 3
+(78, 'Normal', 4, 9, 4, 5), -- Marinho (Fortaleza) marcou aos 78 do 2º tempo na partida 4
+(15, 'Pênalti', 5, 3, 5, 6), -- Vitão (Internacional) marcou de pênalti aos 15 do 1º tempo na partida 5
+(90, 'Normal', 6, 7, 6, 7), -- Luciano (São Paulo) marcou aos 90 do 2º tempo na partida 6
+(34, 'Normal', 7, 8, 7, 8), -- Wesley (Corinthians) marcou aos 34 do 1º tempo na partida 7
+(50, 'Contra', 8, 2, 8, 9), -- Gilberto (Bahia) gol contra aos 50 do 2º tempo na partida 8
+(22, 'Normal', 9, 4, 9, 10), -- Enner Valencia (Internacional) marcou aos 22 do 1º tempo na partida 9
+(60, 'Pênalti', 10, 6, 10, 11), -- Calleri (São Paulo) marcou de pênalti aos 60 do 2º tempo na partida 10
+(88, 'Normal', 11, 5, 11, 12), -- Fabricio Bustos (Internacional) marcou aos 88 do 2º tempo na partida 11
+(40, 'Contra', 12, 1, 12, 13), -- Gatito Fernández (Botafogo) gol contra aos 40 do 1º tempo na partida 12
+(30, 'Normal', 13, 2, 13, 14), -- Marcos Rocha (Palmeiras) marcou aos 30 do 1º tempo na partida 13
+(75, 'Pênalti', 14, 3, 14, 15), -- Rossi (Flamengo) marcou de pênalti aos 75 do 2º tempo na partida 14
+(55, 'Normal', 15, 4, 1, 1), -- Tinga (Fortaleza) marcou aos 55 do 2º tempo na partida 15
+(10, 'Contra', 16, 6, 16, 1); -- Arboleda (São Paulo) gol contra aos 10 do 1º tempo na partida 16
+
+SELECT * FROM Gol;
+
+-- TABELA CARTÃO --------------------------------------
+DROP TABLE IF EXISTS Cartao;
+CREATE TABLE IF NOT EXISTS Cartao (
+    ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    tipo VARCHAR(20), -- Ex: 'Amarelo', 'Vermelho'
+    minuto INT,
+    fk_partida INT,
+    fk_jogador INT,
+    fk_clube INT,
+    -- chaves estrangeiras --
+    FOREIGN KEY (fk_partida) REFERENCES Partida(ID),
+    FOREIGN KEY (fk_jogador) REFERENCES Jogador(ID),
+    FOREIGN KEY (fk_clube) REFERENCES Clube(ID)
+);
+
+-- inserts --
+INSERT INTO Cartao (tipo, minuto, fk_partida, fk_jogador, fk_clube) VALUES
+('Amarelo', 30, 1, 6, 1), -- Marlon Freitas (Botafogo) levou amarelo aos 30 do 1º tempo na partida 1
+('Vermelho', 80, 2, 7, 4), -- Pochettino (Fortaleza) levou vermelho aos 80 do 2º tempo na partida 2
+('Amarelo', 55, 3, 3, 5), -- Vitão (Internacional) levou amarelo aos 55 do 2º tempo na partida 3
+('Amarelo', 12, 4, 2, 8), -- Gilberto (Bahia) levou amarelo aos 12 do 1º tempo na partida 4
+('Vermelho', 90, 5, 4, 9), -- Enner Valencia (Internacional) levou vermelho aos 90 do 2º tempo na partida 5
+('Amarelo', 45, 6, 5, 10), -- Fabricio Bustos (Internacional) levou amarelo aos 45 do 1º tempo na partida 6
+('Amarelo', 20, 7, 8, 11), -- Wesley (Corinthians) levou amarelo aos 20 do 1º tempo na partida 7
+('Vermelho', 70, 8, 9, 12), -- Tinga (Fortaleza) levou vermelho aos 70 do 2º tempo na partida 8
+('Amarelo', 15, 9, 10, 13), -- Calleri (São Paulo) levou amarelo aos 15 do 1º tempo na partida 9
+('Amarelo', 60, 10, 11, 14), -- Rossi (Flamengo) levou amarelo aos 60 do 2º tempo na partida 10
+('Vermelho', 50, 11, 12, 15), -- Gatito Fernández (Botafogo) levou vermelho aos 50 do 2º tempo na partida 11
+('Amarelo', 25, 12, 13, 16), -- Arboleda (São Paulo) levou amarelo aos 25 do primeiro tempo na partida12
+('Amarelo', 35, 13, 14, 17), -- Calleri (São Paulo) levou amarelo aos 35 do primeiro tempo na partida13
+('Vermelho', 65, 14, 15, 18), -- Rossi (Flamengo) levou vermelho aos 65 do segundo tempo na partida14
+('Amarelo', 45, 15, 16, 19), -- Gatito Fernández (Botafogo) levou amarelo aos 45 do primeiro tempo na partida15
+('Amarelo', 55, 16, 17, 20); -- Arboleda (São Paulo) levou amarelo aos 55 do segundo tempo na partida16
+
+-- RELACIONAMENTO ARBITRO_DA_PARTIDA --------------------------------------
+CREATE TABLE IF NOT EXISTS Arbitro_da_partida (
+    ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    fk_arbitro INT,
+    fk_partida INT,
+    -- chaves estrangeiras --
+    FOREIGN KEY (fk_arbitro) REFERENCES Arbitro(ID_Arbitro),
+    FOREIGN KEY (fk_partida) REFERENCES Partida(ID)
+);
+
+-- inserts --
+INSERT INTO Arbitro_da_partida (fk_arbitro, fk_partida) VALUES (1, 1);
+INSERT INTO Arbitro_da_partida (fk_arbitro, fk_partida) VALUES (2, 1);
+
+-- RELACIONAMENTO PARTIDA_RODADA --------------------------------------
 CREATE Table Partida_Rodada (
     fk_partida INT NOT NULL,
     fk_rodada INT NOT NULL,
@@ -1149,6 +1154,8 @@ CREATE Table Partida_Rodada (
     FOREIGN KEY (fk_partida) REFERENCES Partida(ID),
     FOREIGN KEY (fk_rodada) REFERENCES Rodada(id)
 );
+
+-- inserts --
 -- Associando partidas às rodadas (1 rodada = 10 partidas)
 INSERT INTO Partida_Rodada (fk_partida, fk_rodada) VALUES
 (1,1),(2,1),(3,1),(4,1),(5,1),(6,1),(7,1),(8,1),(9,1),(10,1),
