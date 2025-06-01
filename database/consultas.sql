@@ -49,7 +49,7 @@ FROM
     Clube
 ORDER BY Clube.id LIMIT 5;
 -- Selecione o NOME dos clubes ordenados pelo id de forma ascendente, limitando a 5 resultados  
------ Z -----
+----- INNER JOIN -----
 SELECT
     jogador.Nome,
     clube.Nome
@@ -69,8 +69,48 @@ SELECT
 FROM
     partida P
 INNER JOIN
-    clube CM ON P.fk_clubeMandante = CM.id
+    clube CM ON P.fk_timeMandante = CM.id
 INNER JOIN
-    clube CV ON P.fk_clubeVisitante = C.id
+    clube CV ON P.fk_timeVisitante = CV.id
 INNER JOIN
-    arbitro A ON P.fk_arbitro = A.id_arbitro;
+    arbitro A ON P.fk_arbitro = A.ID_Arbitro;
+-- Selecione a DATA, o NOME do clube mandante, o NOME do clube visitante e o NOME do árbitro de todas as partidas
+-----
+----- Funções de Agregação -----
+SELECT
+    COUNT(Gol.tipo)
+FROM
+    Gol
+WHERE
+    Gol.tipo = 'Penalti';
+-- Selecione a quantidade de gols do tipo penalti
+-----
+SELECT
+    SUM(gols_timeMandante) AS total_gols_mandante,
+    SUM(gols_timevisitante) AS total_gols_visitante,
+    data
+FROM
+    partida
+WHERE
+    Partida.data = '2025-04-19';
+-- Selecione a soma dos gols do time mandante e visitante da partida que ocorreu no dia 19/04/2025
+-----
+SELECT
+    MIN(Gol.Minuto) AS primeiro_gol,
+    MAX(Gol.Minuto) AS ultimo_gol
+FROM
+    Gol
+WHERE
+    Gol.fk_partida = 11;
+-- Selecione o minuto do primeiro gol e o minuto do último gol da partida com id 11
+-----
+SELECT
+    Gol.fk_jogador,
+    COUNT(Gol.tipo) AS total_gols
+FROM
+    Gol
+GROUP BY
+    fk_jogador
+HAVING
+    COUNT(Gol.tipo) > 1;
+-- Selecione o fk_jogador e a quantidade de gols do jogador, considerando apenas jogadores que tenham mais de 1 gol
