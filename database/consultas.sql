@@ -113,4 +113,83 @@ GROUP BY
     fk_jogador
 HAVING
     COUNT(Gol.tipo) > 1;
--- Selecione o fk_jogador e a quantidade de gols do jogador, considerando apenas jogadores que tenham mais de 1 gol
+
+use campeonato_futebol;
+
+--Clube com mais gols marcados---------------------------
+SELECT 
+    c.nome AS Clube,
+    SUM(CASE 
+            WHEN p.fk_timeMandante = c.ID THEN p.gols_timeMandante
+            WHEN p.fk_timeVisitante = c.ID THEN p.gols_timeVisitante
+            ELSE 0
+        END) AS Total_Gols
+FROM Clube c
+JOIN Partida p ON c.ID = p.fk_timeMandante OR c.ID = p.fk_timeVisitante
+GROUP BY c.ID
+ORDER BY Total_Gols DESC
+LIMIT 1;
+
+--Gols marcados por todos os clubes (ranking completo)--------------------
+SELECT 
+    c.nome AS Clube,
+    SUM(CASE 
+            WHEN p.fk_timeMandante = c.ID THEN p.gols_timeMandante
+            WHEN p.fk_timeVisitante = c.ID THEN p.gols_timeVisitante
+            ELSE 0
+        END) AS Total_Gols
+FROM Clube c
+JOIN Partida p ON c.ID = p.fk_timeMandante OR c.ID = p.fk_timeVisitante
+GROUP BY c.ID
+ORDER BY Total_Gols DESC;
+
+-- Clube que mais sofreu gols--------------
+SELECT 
+    c.nome AS Clube,
+    SUM(CASE 
+            WHEN p.fk_timeMandante = c.ID THEN p.gols_timeVisitante
+            WHEN p.fk_timeVisitante = c.ID THEN p.gols_timeMandante
+            ELSE 0
+        END) AS Gols_Sofridos
+FROM Clube c
+JOIN Partida p ON c.ID = p.fk_timeMandante OR c.ID = p.fk_timeVisitante
+GROUP BY c.ID
+ORDER BY Gols_Sofridos DESC
+LIMIT 1;
+
+--Total de jogos por clube---------------
+SELECT 
+    c.nome AS Clube,
+    COUNT(p.ID) AS Jogos_Disputados
+FROM Clube c
+JOIN Partida p ON c.ID = p.fk_timeMandante OR c.ID = p.fk_timeVisitante
+GROUP BY c.ID
+ORDER BY Jogos_Disputados DESC;
+
+
+SELECT 
+    j.Nome AS Jogador,
+    c.Nome AS Clube,
+    COUNT(*) AS Gols_Marcados
+FROM Gol g
+JOIN Jogador j ON g.fk_jogador = j.ID
+JOIN Clube c ON j.fk_clube = c.ID
+GROUP BY j.ID
+ORDER BY Gols_Marcados ASC;
+
+SELECT 
+    Posicao,
+    COUNT(*) AS Quantidade
+FROM Jogador
+GROUP BY Posicao
+ORDER BY Quantidade DESC;
+
+SELECT 
+    c.Nome AS Clube,
+    COUNT(j.ID) AS Total_Jogadores
+FROM Clube c
+LEFT JOIN Jogador j ON j.fk_clube = c.ID
+GROUP BY c.ID
+ORDER BY Total_Jogadores DESC;
+
+SELECT * FROM Jogador;

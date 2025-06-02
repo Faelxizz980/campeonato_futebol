@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS Estadio(
 SET @ID_Estadio := LAST_INSERT_ID();
 
 -- inserts --
-INSERT INTO Estadio (nome, localizacao, data_construçao, capacidade) VALUES
+INSERT INTO Estadio (nome_estadio, localizacao, data_construçao, capacidade) VALUES
 ('Estádio Nilton Santos', 'Rio de Janeiro', '2007-06-30', 46731), -- Botafogo
 ('Allianz Parque', 'São Paulo', '2014-11-19', 43713), -- Palmeiras
 ('Maracanã', 'Rio de Janeiro', '1950-06-16', 78838), -- Flamengo
@@ -1126,31 +1126,10 @@ INSERT INTO Cartao (tipo, minuto, fk_partida, fk_jogador, fk_clube) VALUES
 ('Amarelo', 15, 9, 10, 13), -- Calleri (São Paulo) levou amarelo aos 15 do 1º tempo na partida 9
 ('Amarelo', 60, 10, 11, 14), -- Rossi (Flamengo) levou amarelo aos 60 do 2º tempo na partida 10
 ('Vermelho', 50, 11, 12, 15), -- Gatito Fernández (Botafogo) levou vermelho aos 50 do 2º tempo na partida 11
-('Amarelo', 25, 12, 13, 16), -- Arboleda (São Paulo) levou amarelo aos 25 do primeiro tempo na partida12
-('Amarelo', 35, 13, 14, 17), -- Calleri (São Paulo) levou amarelo aos 35 do primeiro tempo na partida13
-('Vermelho', 65, 14, 15, 18), -- Rossi (Flamengo) levou vermelho aos 65 do segundo tempo na partida14
-('Amarelo', 45, 15, 16, 19), -- Gatito Fernández (Botafogo) levou amarelo aos 45 do primeiro tempo na partida15
-('Amarelo', 55, 16, 17, 20); -- Arboleda (São Paulo) levou amarelo aos 55 do segundo tempo na partida16
+('Amarelo', 25, 12, 13, 16), -- Arboleda (São Paulo) lev
 
--- RELACIONAMENTO ARBITRO_DA_PARTIDA --------------------------------------
-CREATE TABLE IF NOT EXISTS Arbitro_da_partida (
-    ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    fk_arbitro INT,
-    fk_partida INT,
-    -- chaves estrangeiras --
-    FOREIGN KEY (fk_arbitro) REFERENCES Arbitro(ID_Arbitro),
-    FOREIGN KEY (fk_partida) REFERENCES Partida(ID)
-);
 
--- inserts --
-INSERT INTO Arbitro_da_partida (fk_arbitro, fk_partida) VALUES (1, 1);
-INSERT INTO Arbitro_da_partida (fk_arbitro, fk_partida) VALUES (2, 1);
 
--- RELACIONAMENTO PARTIDA_RODADA --------------------------------------
-CREATE Table Partida_Rodada (
-    fk_partida INT NOT NULL,
-    fk_rodada INT NOT NULL,
-    PRIMARY KEY (fk_partida, fk_rodada),
     FOREIGN KEY (fk_partida) REFERENCES Partida(ID),
     FOREIGN KEY (fk_rodada) REFERENCES Rodada(id)
 );
