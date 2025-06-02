@@ -1,15 +1,15 @@
-SELECT * FROM Clube;
--- Selecione todas as colunas a tabela Clube
------
 SELECT Nome, Presidente FROM Clube;
--- Selecione as colunas Nome e Presidente da tabela Clube
+-- Mostra os presidentes de cadas clube --
 -----
+
 SELECT Nome, Presidente FROM Clube WHERE Clube.Nome = "Flamengo";
 -- Selecione o NOME e o PRESIDENTE do clube Flamengo
 -----
+
 SELECT Nome, Posicao, fk_clube FROM Jogador WHERE posicao = 'Atacante' AND fk_clube = 1;
 -- Selecione o NOME, POSICAO e fk_clube dos jogadores que sejam atacantes e do clube com id 1
 -----
+
 SELECT
     Nome,
     Posicao
@@ -19,22 +19,7 @@ WHERE
     Jogador.Posicao = 'Atacante' OR Jogador.Posicao = 'Meia';
 -- Selecione o NOME e POSICAO dos jogadores que sejam atacantes ou meias
 -----
-SELECT
-    Nome
-FROM
-    clube
-WHERE
-    Clube.nome LIKE 'A%';
--- Selecione o NOME dos clubes que comecem com a letra A
------
-SELECT
-    Nome,
-    fk_clube
-FROM
-    jogador
-WHERE fk_clube IN (1,7);
--- Selecione o NOME e fk_clube dos jogadores que sejam do clube com id 1 ou 7
------
+
 SELECT
     Nome,
     Posicao
@@ -43,12 +28,13 @@ FROM
 ORDER BY Posicao ASC;
 -- Selecione o NOME e POSICAO dos jogadores ordenados por POSICAO de forma ascendente
 -----
+
 SELECT
     Nome
 FROM
     Clube
-ORDER BY Clube.id LIMIT 5;
--- Selecione o NOME dos clubes ordenados pelo id de forma ascendente, limitando a 5 resultados  
+ORDER BY Clube.id;
+-- Selecione o NOME dos clubes ordenados pelo id.  
 ----- INNER JOIN -----
 SELECT
     jogador.Nome,
@@ -76,7 +62,7 @@ INNER JOIN
     arbitro A ON P.fk_arbitro = A.ID_Arbitro;
 -- Selecione a DATA, o NOME do clube mandante, o NOME do clube visitante e o NOME do árbitro de todas as partidas
 -----
------ Funções de Agregação -----
+
 SELECT
     COUNT(Gol.tipo)
 FROM
@@ -85,6 +71,7 @@ WHERE
     Gol.tipo = 'Penalti';
 -- Selecione a quantidade de gols do tipo penalti
 -----
+
 SELECT
     SUM(gols_timeMandante) AS total_gols_mandante,
     SUM(gols_timevisitante) AS total_gols_visitante,
@@ -92,9 +79,10 @@ SELECT
 FROM
     partida
 WHERE
-    Partida.data = '2025-04-19';
--- Selecione a soma dos gols do time mandante e visitante da partida que ocorreu no dia 19/04/2025
+    Partida.data = '2025-04-16';
+-- Selecione a soma dos gols do time mandante e visitante da partida que ocorreu no dia 16/04/2025
 -----
+
 SELECT
     MIN(Gol.Minuto) AS primeiro_gol,
     MAX(Gol.Minuto) AS ultimo_gol
@@ -104,6 +92,7 @@ WHERE
     Gol.fk_partida = 11;
 -- Selecione o minuto do primeiro gol e o minuto do último gol da partida com id 11
 -----
+
 SELECT
     Gol.fk_jogador,
     COUNT(Gol.tipo) AS total_gols
@@ -115,8 +104,9 @@ HAVING
     COUNT(Gol.tipo) > 1;
 
 use campeonato_futebol;
+-- Seleciona os jogadores que fizeram mais de um gol no campeonato --
+-----
 
---Clube com mais gols marcados---------------------------
 SELECT 
     c.nome AS Clube,
     SUM(CASE 
@@ -129,8 +119,9 @@ JOIN Partida p ON c.ID = p.fk_timeMandante OR c.ID = p.fk_timeVisitante
 GROUP BY c.ID
 ORDER BY Total_Gols DESC
 LIMIT 1;
+-- Clube com mais gols marcados ---------------------------
+-----
 
---Gols marcados por todos os clubes (ranking completo)--------------------
 SELECT 
     c.nome AS Clube,
     SUM(CASE 
@@ -142,8 +133,9 @@ FROM Clube c
 JOIN Partida p ON c.ID = p.fk_timeMandante OR c.ID = p.fk_timeVisitante
 GROUP BY c.ID
 ORDER BY Total_Gols DESC;
+-- Gols marcados por todos os clubes ---------------------------
+-----
 
--- Clube que mais sofreu gols--------------
 SELECT 
     c.nome AS Clube,
     SUM(CASE 
@@ -156,8 +148,9 @@ JOIN Partida p ON c.ID = p.fk_timeMandante OR c.ID = p.fk_timeVisitante
 GROUP BY c.ID
 ORDER BY Gols_Sofridos DESC
 LIMIT 1;
+-- Clube que mais sofreu gols ---------------------------
+-----
 
---Total de jogos por clube---------------
 SELECT 
     c.nome AS Clube,
     COUNT(p.ID) AS Jogos_Disputados
@@ -165,7 +158,8 @@ FROM Clube c
 JOIN Partida p ON c.ID = p.fk_timeMandante OR c.ID = p.fk_timeVisitante
 GROUP BY c.ID
 ORDER BY Jogos_Disputados DESC;
-
+-- Total de jogos por clube ---------------------------
+-----
 
 SELECT 
     j.Nome AS Jogador,
@@ -176,6 +170,8 @@ JOIN Jogador j ON g.fk_jogador = j.ID
 JOIN Clube c ON j.fk_clube = c.ID
 GROUP BY j.ID
 ORDER BY Gols_Marcados ASC;
+-- Artilharia do campeonato ---------------------------
+-----
 
 SELECT 
     Posicao,
@@ -183,6 +179,8 @@ SELECT
 FROM Jogador
 GROUP BY Posicao
 ORDER BY Quantidade DESC;
+-- Número de jogadores por posição ---------------------------
+-----
 
 SELECT 
     c.Nome AS Clube,
@@ -191,5 +189,5 @@ FROM Clube c
 LEFT JOIN Jogador j ON j.fk_clube = c.ID
 GROUP BY c.ID
 ORDER BY Total_Jogadores DESC;
-
-SELECT * FROM Jogador;
+-- Jogadores por clube ---------------------------
+-----
