@@ -710,16 +710,16 @@ VALUES
 -- Rodada 38 (2025-10-18 a 2025-10-22)
 INSERT INTO Partida (resultado_jogo, data, hora, gols_timeMandante, gols_timeVisitante, fk_campeonato, fk_estadio, fk_timeMandante, fk_timeVisitante, fk_arbitro)
 VALUES 
-('2-1', '2025-10-18', '16:00:00', 2, 1, 1, 1, 1, 19),
-('1-1', '2025-10-18', '18:00:00', 1, 1, 1, 2, 2, 20),
-('0-2', '2025-10-19', '20:00:00', 0, 2, 1, 3, 3, 11),
-('3-3', '2025-10-19', '15:00:00', 3, 3, 1, 4, 4, 12),
-('1-0', '2025-10-20', '17:00:00', 1, 0, 1, 5, 5, 13),
-('2-2', '2025-10-20', '19:00:00', 2, 2, 1, 6, 6, 14),
-('0-1', '2025-10-21', '14:00:00', 0, 1, 1, 7, 7, 15),
-('1-1', '2025-10-21', '16:30:00', 1, 1, 1, 8, 8, 16),
-('2-0', '2025-10-22', '18:30:00', 2, 0, 1, 9, 9, 17),
-('3-2', '2025-10-22', '20:30:00', 3, 2, 1, 10, 10, 18);
+('2-1', '2025-10-18', '16:00:00', 2, 1, 1, 1, 1, 19,2),
+('1-1', '2025-10-18', '18:00:00', 1, 1, 1, 2, 2, 20,5),
+('0-2', '2025-10-19', '20:00:00', 0, 2, 1, 3, 3, 11,7),
+('3-3', '2025-10-19', '15:00:00', 3, 3, 1, 4, 4, 12,8),
+('1-0', '2025-10-20', '17:00:00', 1, 0, 1, 5, 5, 13,10),
+('2-2', '2025-10-20', '19:00:00', 2, 2, 1, 6, 6, 14,4),
+('0-1', '2025-10-21', '14:00:00', 0, 1, 1, 7, 7, 15,2),
+('1-1', '2025-10-21', '16:30:00', 1, 1, 1, 8, 8, 16,15),
+('2-0', '2025-10-22', '18:30:00', 2, 0, 1, 9, 9, 17, 6),
+('3-2', '2025-10-22', '20:30:00', 3, 2, 1, 10, 10, 18,1);
 
 -- TABELA RODADA --------------------------------------
 DROP TABLE IF EXISTS Rodada;
@@ -1126,15 +1126,17 @@ INSERT INTO Cartao (tipo, minuto, fk_partida, fk_jogador, fk_clube) VALUES
 ('Amarelo', 15, 9, 10, 13), -- Calleri (São Paulo) levou amarelo aos 15 do 1º tempo na partida 9
 ('Amarelo', 60, 10, 11, 14), -- Rossi (Flamengo) levou amarelo aos 60 do 2º tempo na partida 10
 ('Vermelho', 50, 11, 12, 15), -- Gatito Fernández (Botafogo) levou vermelho aos 50 do 2º tempo na partida 11
-('Amarelo', 25, 12, 13, 16), -- Arboleda (São Paulo) lev
+('Amarelo', 25, 12, 13, 16); -- Arboleda (São Paulo) lev
 
-
-
-    FOREIGN KEY (fk_partida) REFERENCES Partida(ID),
-    FOREIGN KEY (fk_rodada) REFERENCES Rodada(id)
-);
 
 -- inserts --
+CREATE TABLE IF NOT EXISTS Partida_Rodada (
+    fk_partida INT,
+    fk_rodada INT,
+    PRIMARY KEY (fk_partida, fk_rodada),
+    FOREIGN KEY (fk_partida) REFERENCES Partida(ID),
+    FOREIGN KEY (fk_rodada) REFERENCES Rodada(ID)
+);
 -- Associando partidas às rodadas (1 rodada = 10 partidas)
 INSERT INTO Partida_Rodada (fk_partida, fk_rodada) VALUES
 (1,1),(2,1),(3,1),(4,1),(5,1),(6,1),(7,1),(8,1),(9,1),(10,1),
